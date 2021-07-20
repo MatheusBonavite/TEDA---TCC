@@ -94,7 +94,26 @@ unsigned int describe_features(sqlite3* db){
         counter++;
     }
     sqlite3_finalize(stmt);
-    return counter-1; //removing one! We do that because one is the id... The id will be useless for computation!
+    return counter-2; //removing two! We do that because one is the id, the other is y... The id will be useless for computation!
+}
+
+void zero_initializer(double** matrix, int rows, int cols){
+    for (int i=0; i<rows; i++){
+        for (int j=0; j<cols; j++){
+            matrix[i][j] = 0;
+        }
+    }
+
+    /*This will be removed soon */
+    for (int i=0; i<rows; i++){
+        for (int j=0; j<cols; j++){
+           printf("Matrix [%i][%i] : %lf \t", i, j, matrix[i][j]);
+        }
+        printf("\n");
+    }
+    /***************************/
+
+    return;
 }
 
 float eccentricity(int k, float variance){
