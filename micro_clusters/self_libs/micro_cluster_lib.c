@@ -116,6 +116,30 @@ void zero_initializer(double** matrix, int rows, int cols){
     return;
 }
 
+void retrieve_feature_from_table(double** matrix, int rows, int cols, sqlite3* db){
+    unsigned int counter = 0;
+    sqlite3_stmt* stmt;
+    sqlite3_prepare_v2(
+        db,
+        "SELECT * FROM chameleon_ds4_clean;",
+        -1,
+        &stmt,
+        NULL
+    );
+    
+    int i = 0;
+    while(sqlite3_step(stmt) != SQLITE_DONE){
+        counter++;
+        for (int j=0; j<cols; j++){
+            matrix[i][j] = sqlite3_column_double(stmt,j+1);
+        }
+        i++;
+    }
+
+    sqlite3_finalize(stmt);
+    return;
+}
+
 float eccentricity(int k, float variance){
     printf("Ola!");
     return 0.0;

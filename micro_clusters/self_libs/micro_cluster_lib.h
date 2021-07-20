@@ -17,4 +17,5 @@ unsigned int describe_features(sqlite3* db);
 sqlite3* either_exists_or_create_table(char* err, sqlite3* db);
 void intert_entries_in_table(char* err, sqlite3* db);
 void zero_initializer(double** matrix, int rows, int cols);
+void retrieve_feature_from_table(double** matrix, int rows, int cols, sqlite3* db);
 int get_amount_of_data(sqlite3* db);
