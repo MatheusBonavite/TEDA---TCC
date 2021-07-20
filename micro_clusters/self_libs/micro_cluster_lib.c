@@ -97,7 +97,7 @@ unsigned int describe_features(sqlite3* db){
     return counter-2; //removing two! We do that because one is the id, the other is y... The id will be useless for computation!
 }
 
-void zero_initializer(double** matrix, int rows, int cols){
+void zero_matrix_initializer(double** matrix, int rows, int cols){
     for (int i=0; i<rows; i++){
         for (int j=0; j<cols; j++){
             matrix[i][j] = 0;
@@ -116,8 +116,22 @@ void zero_initializer(double** matrix, int rows, int cols){
     return;
 }
 
+void zero_array_initializer(int* array, int rows){
+    for (int i=0; i<rows; i++){
+        array[i] = 0;
+    }
+
+    /*This will be removed soon */
+    for (int i=0; i<rows; i++){
+        printf("Array [%i] : %i \t", i, array[i]);
+        printf("\n");
+    }
+    /***************************/
+
+    return;
+}
+
 void retrieve_feature_from_table(double** matrix, int rows, int cols, sqlite3* db){
-    unsigned int counter = 0;
     sqlite3_stmt* stmt;
     sqlite3_prepare_v2(
         db,
@@ -129,10 +143,29 @@ void retrieve_feature_from_table(double** matrix, int rows, int cols, sqlite3* d
     
     int i = 0;
     while(sqlite3_step(stmt) != SQLITE_DONE){
-        counter++;
         for (int j=0; j<cols; j++){
             matrix[i][j] = sqlite3_column_double(stmt,j+1);
         }
+        i++;
+    }
+
+    sqlite3_finalize(stmt);
+    return;
+}
+
+void retrieve_label_from_table(int* array, int amount_of_features, sqlite3* db){
+    sqlite3_stmt* stmt;
+    sqlite3_prepare_v2(
+        db,
+        "SELECT * FROM chameleon_ds4_clean;",
+        -1,
+        &stmt,
+        NULL
+    );
+    
+    int i =0;
+    while(sqlite3_step(stmt) != SQLITE_DONE){
+        array[i]= sqlite3_column_double(stmt,amount_of_features+1);
         i++;
     }
 

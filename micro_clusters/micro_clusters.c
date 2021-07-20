@@ -18,8 +18,8 @@ int main(){
     /*End - Insert into TABLE!*/
 
     /* Retrieving amount of data rows from the table */
-    int rows_x_feature = get_amount_of_data(db);
-    printf("\n Amount of data: %i", rows_x_feature);
+    int amount_of_rows = get_amount_of_data(db);
+    printf("\n Amount of data: %i", amount_of_rows);
     /**********************************/
 
     /* Retrieving amount of data columns from the table */
@@ -32,18 +32,27 @@ int main(){
     //First it will be assumed that all data is of type double, later a more generic way should be implemented.
     //Labels (y) will be assumed to be unsigned integers, and also take one column in table.
     double **x_features;
-    x_features = malloc(rows_x_feature * sizeof *x_features);
-    for (int i=0; i<rows_x_feature; i++){
+    x_features = malloc(amount_of_rows * sizeof *x_features);
+    for (int i=0; i<amount_of_rows; i++){
         x_features[i] = malloc(columns_x_feature * sizeof *x_features[i]);
     }
-    zero_initializer(x_features, rows_x_feature, columns_x_feature);
-    retrieve_feature_from_table(x_features, rows_x_feature, columns_x_feature, db);
+    zero_matrix_initializer(x_features, amount_of_rows, columns_x_feature);
+    retrieve_feature_from_table(x_features, amount_of_rows, columns_x_feature, db);
 
+    int *y_labels;
+    y_labels = (int*)malloc(amount_of_rows * sizeof(int));
+    zero_array_initializer(y_labels, amount_of_rows);
+    retrieve_label_from_table(y_labels, columns_x_feature, db);
     /*This will be removed soon */
-    for (int i=0; i<rows_x_feature; i++){
+    for (int i=0; i<amount_of_rows; i++){
         for (int j=0; j<columns_x_feature; j++){
            printf("Matrix [%i][%i] : %lf \t", i, j, x_features[i][j]);
         }
+        printf("\n");
+    }
+
+    for (int i=0; i<amount_of_rows; i++){
+        printf("Array [%i] : %i \t", i, y_labels[i]);
         printf("\n");
     }
     /***************************/
@@ -55,10 +64,11 @@ int main(){
     /*********************/
 
     /*Preventing memory leaks on x_features and label arrays */
-    for (int i=0; i<rows_x_feature; i++){
+    for (int i=0; i<amount_of_rows; i++){
         free(x_features[i]);
     }
     free(x_features);
+    free(y_labels);
     /*********************/
     return 0;
 }
