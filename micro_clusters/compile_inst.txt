@@ -1,0 +1,2 @@
+gcc micro_clusters.c self_libs/micro_cluster_lib.c sqlite/sqlite3.c -o micro_clusters_test
+./micro_clusters_test
