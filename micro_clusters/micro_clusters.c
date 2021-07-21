@@ -55,6 +55,11 @@ int main(){
         printf("Array [%i] : %i \t", i, y_labels[i]);
         printf("\n");
     }
+
+    //Euclidean distance calculation:
+    printf("\nEuclidean distance between features: %lf", euclidean_distance(x_features, 0, 1));
+    printf("\nCumulative proximity (suppose k=1): %lf", cumulative_proximity(x_features,1));
+    printf("\nOffline eccentricity (suppose k=200): %lf", offline_eccentricity(x_features,200));
     /***************************/
 
     /**********************************/
