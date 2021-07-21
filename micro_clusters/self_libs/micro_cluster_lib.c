@@ -5,6 +5,7 @@ typedef SSIZE_T ssize_t;
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 #include "micro_cluster_lib.h"
 #include "../sqlite/sqlite3.h"
 
@@ -173,7 +174,37 @@ void retrieve_label_from_table(int* array, int amount_of_features, sqlite3* db){
     return;
 }
 
-float eccentricity(int k, float variance){
-    printf("Ola!");
-    return 0.0;
+double euclidean_distance(double** matrix, unsigned int k, unsigned int i){
+    double cached_first_op = (matrix[k][0] - matrix[i][0]);
+    double cached_second_op = (matrix[k][1] - matrix[i][1]);
+    double result = 0.0;
+    result = cached_first_op * cached_first_op;
+    result += cached_second_op * cached_second_op;
+    return (double) sqrt(result);
+}
+
+double cumulative_proximity(double** matrix, unsigned int k){
+    double result = 0.0;
+    if(k > 0){
+        for(int i=0; i<k; i++){
+            result += euclidean_distance(matrix, k, i);
+        }
+    }
+    return result;
+}
+
+double offline_eccentricity(double** matrix, unsigned int k){
+    if(k < 2){
+        printf("\nK must be at least 2! Returning 0.0, may not be the correct result!\n");
+        return 0.0;
+    }
+    double denominator_result = 0.0;
+    for(int i=0; i<k; i++)
+        denominator_result += cumulative_proximity(matrix, i);
+
+    if(denominator_result > 0)
+        return ((2.0*(cumulative_proximity(matrix, k)))/denominator_result);
+
+    printf("\nSum of all cumulative proximities was 0! We can't devide by zero, so returning INF!\n");
+    return INFINITY;
 }
