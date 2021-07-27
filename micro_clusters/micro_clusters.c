@@ -57,11 +57,30 @@ int main(){
     }
 
     //Euclidean distance calculation:
-    printf("\nEuclidean distance between features: %lf", euclidean_distance(x_features, 0, 1));
-    printf("\nCumulative proximity (suppose k=1): %lf", cumulative_proximity(x_features,1));
-    printf("\nOffline eccentricity (suppose k=200): %lf", offline_eccentricity(x_features,200));
+    printf("\nEuclidean distance between features: %lf", euclidean_distance(x_features, 0, 1, columns_x_feature));
+    printf("\nCumulative proximity (suppose k=1): %lf", cumulative_proximity(x_features,1,columns_x_feature));
+    printf("\nOffline eccentricity (suppose k=200): %lf", offline_eccentricity(x_features,columns_x_feature, 200));
     /***************************/
+    //Online eccentricity calculation (example for k=200):
+    double* mi = (double*) malloc(columns_x_feature * sizeof(double));
+    for (int j=0; j<columns_x_feature; j++){
+        mi[j] = x_features[0][j];
+    }
+    for(int i=0; i<columns_x_feature; i++)
+        printf("\nInitial value of mi[%i]: %lf", i, mi[i]);
 
+    double eccentricity = 0.0;
+    double sigma = 0.0;
+    double* ptr_sigma = &sigma;
+
+    for(int i=0; i<200; i++){
+        eccentricity = online_eccentricity(x_features, mi, ptr_sigma, columns_x_feature, i);
+    }
+
+    printf("\nOnline eccentricity (suppose k=200): %lf", eccentricity);
+
+    /***************************/
+    
     /**********************************/
 
     /*Preventing DB Leaks*/
@@ -72,6 +91,7 @@ int main(){
     for (int i=0; i<amount_of_rows; i++){
         free(x_features[i]);
     }
+    free(mi);
     free(x_features);
     free(y_labels);
     /*********************/

@@ -174,37 +174,79 @@ void retrieve_label_from_table(int* array, int amount_of_features, sqlite3* db){
     return;
 }
 
-double euclidean_distance(double** matrix, unsigned int k, unsigned int i){
-    double cached_first_op = (matrix[k][0] - matrix[i][0]);
-    double cached_second_op = (matrix[k][1] - matrix[i][1]);
+double euclidean_distance(double** matrix, unsigned int k, unsigned int i, unsigned int amount_of_columns){
     double result = 0.0;
-    result = cached_first_op * cached_first_op;
-    result += cached_second_op * cached_second_op;
+    for(int w=0; w<amount_of_columns; w++){
+        result += ((matrix[k][w] - matrix[i][w])*(matrix[k][w] - matrix[i][w]));
+    }
+    
     return (double) sqrt(result);
 }
 
-double cumulative_proximity(double** matrix, unsigned int k){
+double cumulative_proximity(double** matrix, unsigned int k, unsigned int amount_of_columns){
     double result = 0.0;
-    if(k > 0){
-        for(int i=0; i<k; i++){
-            result += euclidean_distance(matrix, k, i);
-        }
+    for(int i=0; i<k; i++){
+        result += euclidean_distance(matrix, k, i, amount_of_columns);
     }
     return result;
 }
 
-double offline_eccentricity(double** matrix, unsigned int k){
-    if(k < 2){
-        printf("\nK must be at least 2! Returning 0.0, may not be the correct result!\n");
-        return 0.0;
+double offline_eccentricity(double** matrix, unsigned int amount_of_columns, unsigned int k){
+    if((k+1.0) <= 2){
+        printf("\nK must be at least 2! Returning 1.0, may not be the correct result!\n");
+        return 1.0;
     }
     double denominator_result = 0.0;
     for(int i=0; i<k; i++)
-        denominator_result += cumulative_proximity(matrix, i);
+        denominator_result += cumulative_proximity(matrix, i, amount_of_columns);
 
     if(denominator_result > 0)
-        return ((2.0*(cumulative_proximity(matrix, k)))/denominator_result);
+        return ((2.0*(cumulative_proximity(matrix, k, amount_of_columns)))/denominator_result);
 
     printf("\nSum of all cumulative proximities was 0! We can't devide by zero, so returning INF!\n");
     return INFINITY;
+}
+
+double online_eccentricity(
+    double** matrix,
+    double* mi,
+    double* sigma,
+    unsigned int amount_of_columns,
+    unsigned int k){
+
+    double cached_under_k = (double) 1.0/(k+1.0);
+    double cached_k_minus_one = (double)  (k/(k+1.0));
+    double chached_mod_x_mi = (double)  0.0;
+    double chached_mod_mi_x = (double)  0.0;
+
+    
+    if(k>0){
+        //Updating mi:
+        double* mi_aux = (double*) malloc(amount_of_columns * sizeof(double));
+        for(int i=0; i<amount_of_columns; i++){
+            mi_aux[i] = (cached_k_minus_one * mi[i]);
+            mi_aux[i] += (matrix[k][i] * cached_under_k);
+            mi[i] = mi_aux[i];
+        }
+        free(mi_aux);
+        /***************************/
+
+        //Updating sigma:
+        for(int i=0; i<amount_of_columns; i++){
+            chached_mod_x_mi += ((matrix[k][i] - mi[i])*(matrix[k][i] - mi[i]));
+            chached_mod_mi_x += ((mi[i] - matrix[k][i])*(mi[i] - matrix[k][i]));
+        }
+
+        if(*sigma == 0.0)
+            *sigma = (1.0/k)*chached_mod_x_mi;
+        else
+            *sigma = (cached_k_minus_one*(*sigma)) + (1.0/k)*chached_mod_x_mi;
+        /***************************/
+    }
+
+    if((k+1.0) <= 2){
+        return 1.0;
+    }
+
+    return (double) cached_under_k + (chached_mod_mi_x/((k+1.0)*(*sigma)));
 }
