@@ -24,3 +24,7 @@ double cumulative_proximity(double** matrix, unsigned int k, unsigned int amount
 double offline_eccentricity(double** matrix, unsigned int amount_of_columns, unsigned int k);
 double online_eccentricity(double** matrix, double* mi, double* sigma, unsigned int amount_of_columns, unsigned int k);
 int get_amount_of_data(sqlite3* db);
+double m_function(unsigned int k);
+double m_function_second_degree(unsigned int k);
+double m_function_linear(unsigned int k);
+double outlier_condition(double m, unsigned int k);

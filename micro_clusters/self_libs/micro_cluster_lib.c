@@ -193,11 +193,11 @@ double cumulative_proximity(double** matrix, unsigned int k, unsigned int amount
 
 double offline_eccentricity(double** matrix, unsigned int amount_of_columns, unsigned int k){
     if((k+1.0) <= 2){
-        printf("\nK must be at least 2! Returning 1.0, may not be the correct result!\n");
+        printf("\nK must be greater than 2! Returning 1.0, may not be the correct result!\n");
         return 1.0;
     }
     double denominator_result = 0.0;
-    for(int i=0; i<k; i++)
+    for(int i=0; i<=k; i++)
         denominator_result += cumulative_proximity(matrix, i, amount_of_columns);
 
     if(denominator_result > 0)
@@ -220,33 +220,71 @@ double online_eccentricity(
     double chached_mod_mi_x = (double)  0.0;
 
     
-    if(k>0){
-        //Updating mi:
-        double* mi_aux = (double*) malloc(amount_of_columns * sizeof(double));
-        for(int i=0; i<amount_of_columns; i++){
-            mi_aux[i] = (cached_k_minus_one * mi[i]);
-            mi_aux[i] += (matrix[k][i] * cached_under_k);
-            mi[i] = mi_aux[i];
-        }
-        free(mi_aux);
-        /***************************/
+    
+    //Updating mi:
+    double* mi_aux = (double*) malloc(amount_of_columns * sizeof(double));
+    for(int i=0; i<amount_of_columns; i++){
+        mi_aux[i] = (cached_k_minus_one * mi[i]);
+        mi_aux[i] += (matrix[k][i] * cached_under_k);
+        mi[i] = mi_aux[i];
+    }
+    printf("\n Mi update (inside function): \n");
+    for(int i=0; i<amount_of_columns; i++){
+        printf("\n m[%i] = %lf", i, mi[i]);
+    }
+    free(mi_aux);
+    /***************************/
 
+    if(k>0){
         //Updating sigma:
         for(int i=0; i<amount_of_columns; i++){
-            chached_mod_x_mi += ((matrix[k][i] - mi[i])*(matrix[k][i] - mi[i]));
+            chached_mod_x_mi += (fabs(matrix[k][i] - mi[i])*fabs(matrix[k][i] - mi[i]));
             chached_mod_mi_x += ((mi[i] - matrix[k][i])*(mi[i] - matrix[k][i]));
         }
-
-        if(*sigma == 0.0)
-            *sigma = (1.0/k)*chached_mod_x_mi;
-        else
-            *sigma = (cached_k_minus_one*(*sigma)) + (1.0/k)*chached_mod_x_mi;
+        *sigma = (cached_k_minus_one*(*sigma)) + (pow(((sqrt(chached_mod_x_mi)*2.0)/amount_of_columns),2.0)*(1.0/k));
         /***************************/
     }
-
+    printf("\n Sigma update (inside function): ");
+    printf("\n sigma = %lf", *sigma);
     if((k+1.0) <= 2){
         return 1.0;
     }
 
-    return (double) cached_under_k + (chached_mod_mi_x/((k+1.0)*(*sigma)));
+    return (cached_under_k + (chached_mod_mi_x/((k+1.0)*(*sigma))));
+}
+
+double outlier_condition(
+    double m,
+    unsigned int k
+){
+    if(m > 0)
+        return (double)((double)((m*m)+1.0))/((double)(2.0*k));
+    else
+        return 0.0;
+}
+
+double m_function(unsigned int k){
+    unsigned int numerator = 3;
+    double denominator = exp(-0.007*(k-100.0));
+    denominator += 1.0;
+
+    return (double) numerator/denominator;
+}
+
+double m_function_second_degree(unsigned int k){
+    unsigned int numerator = 3;
+    double x = 0.007*(100.0- k);
+    double denominator = 1 + x + (x*x);
+    denominator += 1.0;
+
+    return (double) numerator/denominator;
+}
+
+double m_function_linear(unsigned int k){
+    unsigned int numerator = 3;
+    double x = 0.007*(100.0- k);
+    double denominator = 1 + x;
+    denominator += 1.0;
+
+    return (double) numerator/denominator;
 }
