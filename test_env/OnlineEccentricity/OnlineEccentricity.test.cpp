@@ -77,7 +77,7 @@ void update_sigma_current(double *sigma_current, double *mi_current, double *sam
     double first_fraction = (double) (matrix_index)/(matrix_index + 1.0);
     double second_fraction = (double) (1.0)/(matrix_index);
     double dot_product = vec_dot_product(mi_current, sample_current, columns);
-    *sigma_current = (first_fraction*(*sigma_current)) + (second_fraction*dot_product);
+    *sigma_current = (first_fraction*(*sigma_current)) + (dot_product);
     return;
 }
 
@@ -105,8 +105,8 @@ double *online_eccentricity_s(
     update_sigma_current(sigma_current, mi_current, sample_current, matrix_index, columns);
 
     if(*sigma_current == 0.0){
-        printf("Matrix index ::: %i \n", matrix_index);
-        printf("Sigma value ::: %lf \n", *sigma_current);
+        printf("[F] Matrix index ::: %i \n", matrix_index);
+        printf("[F] Sigma value ::: %lf \n", *sigma_current);
         *eccentricity = (double) (1.0/(matrix_index+1.0));
         return matrix_aux;
     }
@@ -130,8 +130,9 @@ TEST_CASE("One dimensional online eccentricity proximity")
     unsigned int index = 0;
     double sigma_current_value = 0.0;
     double eccentricity_value = 1.0;
-    double test_1d[rows][columns] = { { 20.0 }, { 12.0 }, { 10.0 } };
-
+    double test_1d[rows][columns] = { { 20.0 }, { 12.0 }, { 10.0 }, { 17.0 } };
+    //double test_1d[rows][columns] = { { 20.0 }, { 12.0 }, { 10.0 } };
+    //double test_1d[rows][columns] = { { 20.2 }, { 3.0 }, { 6.4 }, { 11.6 }, { 8.2 }, { 2.2 }, { 11.2 }, { 5.2 }, { 6.2 }, { 0.2 }, { 1.0 }, { 4.8 }, { 2.4 }, { 3.8 } };
     double *matrix = matrix_allocation(1, columns);
     double *mi_current = (double *) malloc(columns * sizeof(double));
     double *sigma_current = &sigma_current_value;

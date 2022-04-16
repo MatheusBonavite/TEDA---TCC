@@ -55,9 +55,9 @@ double offline_eccentricity(double *matrix,  unsigned int i, unsigned int amount
 
 TEST_CASE("One dimensional offline eccentricity proximity")
 {
-    unsigned int rows = 3;
+    unsigned int rows = 4;
     unsigned int columns = 1;
-    double test_1d[rows][columns] = { { 20.0 }, { 12.0 }, { 10.0 } };
+    double test_1d[rows][columns] = { { 20.0 }, { 12.0 }, { 10.0 }, { 17.0 } };
     double *matrix = matrix_allocation(rows, columns);
     for(int i=0; i<rows; i++){
         for(int j=0; j<columns; j++){
@@ -65,13 +65,16 @@ TEST_CASE("One dimensional offline eccentricity proximity")
         }
     }
     REQUIRE(
-        fabs(offline_eccentricity(matrix, 0, rows, columns) - 0.9) < 0.00001
+        fabs(offline_eccentricity(matrix, 0, rows, columns) - 0.6) < 0.00001
     );
     REQUIRE(
-        fabs(offline_eccentricity(matrix, 1, rows, columns) - 0.5) < 0.00001
+        fabs(offline_eccentricity(matrix, 1, rows, columns) - 0.428571429) < 0.00001
     );
     REQUIRE(
-        fabs(offline_eccentricity(matrix, 2, rows, columns) - 0.6) < 0.00001
+        fabs(offline_eccentricity(matrix, 2, rows, columns) - 0.542857143) < 0.00001
+    );
+    REQUIRE(
+        fabs(offline_eccentricity(matrix, 3, rows, columns) - 0.428571429) < 0.00001
     );
     free(matrix);
 }
