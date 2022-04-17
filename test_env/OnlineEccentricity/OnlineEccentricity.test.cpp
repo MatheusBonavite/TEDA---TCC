@@ -43,7 +43,7 @@ double cumulative_proximity(double *matrix, unsigned int i, unsigned int rows, u
     return result;
 }
 
-void update_mi_current(double *mi_current, double *sample_current, unsigned int matrix_index, unsigned int columns)
+void recursive_mean(double *mi_current, double *sample_current, unsigned int matrix_index, unsigned int columns)
 {
     if (matrix_index == 0)
     {
@@ -103,8 +103,7 @@ void update_biased_sigma_current(double *sigma_current, double *mi_current, doub
     return;
 }
 
-double *online_eccentricity_s(
-    double *matrix,
+void online_eccentricity_s(
     unsigned int matrix_index,
     double *sample_current,
     double *mi_current,
@@ -112,66 +111,40 @@ double *online_eccentricity_s(
     double *eccentricity,
     unsigned int columns)
 {
-    for (unsigned int j = 0; j < columns; j++)
-    {
-        matrix[(columns * matrix_index) + j] = sample_current[j];
-    }
-
-    double *matrix_aux = (double *)realloc(matrix, (((matrix_index + 2) * columns) * sizeof(double)));
-    if (matrix_aux == NULL)
-    {
-        printf("Not enough memory \n");
-        free(matrix);
-        exit(1);
-    }
-
-    update_mi_current(mi_current, sample_current, matrix_index, columns);
+    recursive_mean(mi_current, sample_current, matrix_index, columns);
     update_biased_sigma_current(sigma_current, mi_current, sample_current, matrix_index, columns);
+    double dot_product = vec_dot_product(sample_current, mi_current, columns);
+    double denominator = (double)(matrix_index + 1.0) * (*sigma_current);
 
-    if (*sigma_current == 0.0)
-    {
-        printf("[F] Matrix index ::: %i \n", matrix_index);
-        printf("[F] Sigma value ::: %lf \n", *sigma_current);
-        *eccentricity = (1.0);
-        return matrix_aux;
-    }
-
-    printf("Matrix index ::: %i \n", matrix_index);
-    printf("Sigma value ::: %lf \n", *sigma_current);
-    for (unsigned int j = 0; j < columns; j++)
-    {
-        printf("Mi[%i] value :::: %lf \n", j, mi_current[j]);
-    }
-
-    double dot_product = vec_dot_product(mi_current, sample_current, columns);
-    double denominator = (double)(matrix_index) * (*sigma_current);
-    *eccentricity = (1 / (matrix_index)) + (dot_product / denominator);
-    return matrix_aux;
+    printf("sample_current ::: %lf\n", *sample_current);
+    printf("mi_current ::: %lf\n", *mi_current);
+    printf("sigma_current ::: %lf\n", *sigma_current);
+    printf("dot_product ::: %lf\n", dot_product);
+    printf("denominator ::: %lf\n", denominator);
+    printf("(dot_product / denominator) ::: %lf\n", (dot_product / denominator));
+    printf("(1.0 / (matrix_index + 1.0)) ::: %lf\n", (1.0 / (matrix_index + 1.0)));
+    printf("\n");
+    *eccentricity = (1.0 / (matrix_index + 1.0)) + (dot_product / denominator);
+    return;
 }
 
 TEST_CASE("One dimensional online eccentricity proximity")
 {
     unsigned int rows = 4;
     unsigned int columns = 1;
-    unsigned int index = 0;
     double sigma_current_value = 0.0;
     double eccentricity_value = 1.0;
     double test_1d[4][1] = {{20.0}, {12.0}, {10.0}, {17.0}};
-    // double test_1d[rows][columns] = { { 20.0 }, { 12.0 }, { 10.0 } };
-    // double test_1d[rows][columns] = { { 20.2 }, { 3.0 }, { 6.4 }, { 11.6 }, { 8.2 }, { 2.2 }, { 11.2 }, { 5.2 }, { 6.2 }, { 0.2 }, { 1.0 }, { 4.8 }, { 2.4 }, { 3.8 } };
-    double *matrix = matrix_allocation(1, columns);
     double *mi_current = (double *)malloc(columns * sizeof(double));
     double *sigma_current = &sigma_current_value;
     double *eccentricity = &eccentricity_value;
 
     for (unsigned int i = 0; i < rows; i++)
     {
-        matrix = online_eccentricity_s(matrix, index, test_1d[i], mi_current, sigma_current, eccentricity, columns);
+        online_eccentricity_s(i, test_1d[i], mi_current, sigma_current, eccentricity, columns);
         printf("The eccentricity value is: %lf \n", *eccentricity);
         printf("\n");
-        index++;
     }
-    free(matrix);
     free(mi_current);
     REQUIRE(
         0 == 0);
