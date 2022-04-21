@@ -1,7 +1,9 @@
 #pragma once
 double cumulative_proximity(double *matrix, unsigned int i, unsigned int rows, unsigned int columns);
+double squared_cumulative_proximity(double *matrix, unsigned int i, unsigned int rows, unsigned int columns);
 void zero_matrix_initializer(double *matrix, unsigned int rows, unsigned int columns);
 double eccentricity(double *matrix, unsigned int i, unsigned int amount_of_rows, unsigned int amount_of_columns);
+double squared_eccentricity(double *matrix, unsigned int i, unsigned int amount_of_rows, unsigned int amount_of_columns);
 double euclidean_distance(double *matrix, unsigned int i, unsigned int j, unsigned int columns);
 double *matrix_allocation(unsigned int rows, unsigned int columns);
 double vec_dot_product(double *vector_a, double *vector_b, unsigned int columns);

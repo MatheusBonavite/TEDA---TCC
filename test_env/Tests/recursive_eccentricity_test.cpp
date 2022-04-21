@@ -18,8 +18,6 @@ TEST_CASE("One dimensional online eccentricity")
     for (unsigned int i = 0; i < rows; i++)
     {
         recursive_eccentricity(i, test_1d[i], mi_current, sigma_current, eccentricity, columns);
-        printf("The eccentricity value is: %lf \n", *eccentricity);
-        printf("\n");
     }
     free(mi_current);
     REQUIRE(
