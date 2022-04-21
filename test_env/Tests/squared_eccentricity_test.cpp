@@ -4,6 +4,28 @@
 #include <stdlib.h>
 #include "./header/global_header.h"
 
+TEST_CASE("One dimensional offline squared eccentricity")
+{
+    unsigned int rows = 3;
+    unsigned int columns = 1;
+    double test_1d[3][1] = {{20.0}, {12.0}, {10.0}};
+    double *matrix = matrix_allocation(rows, columns);
+    for (int i = 0; i < rows; i++)
+    {
+        for (int j = 0; j < columns; j++)
+        {
+            matrix[(columns * i) + j] = test_1d[i][j];
+        }
+    }
+    REQUIRE(
+        fabs(squared_eccentricity(matrix, 0, rows, columns) - 0.9761904761904762) < 0.00001);
+    REQUIRE(
+        fabs(squared_eccentricity(matrix, 1, rows, columns) - 0.40476190476190477) < 0.00001);
+    REQUIRE(
+        fabs(squared_eccentricity(matrix, 2, rows, columns) - 0.6190476190476191) < 0.00001);
+    free(matrix);
+}
+
 TEST_CASE("Two dimensional offline squared eccentricity")
 {
     unsigned int problem_dimension = 2;
