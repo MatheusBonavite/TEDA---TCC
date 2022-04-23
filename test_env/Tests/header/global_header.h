@@ -12,3 +12,16 @@ void recursive_unbiased_sigma(double *sigma_current, double *mi_current, double 
 void recursive_mean(double *mi_current, double *sample_current, unsigned int matrix_index, unsigned int columns);
 void recursive_biased_sigma(double *sigma_current, double *mi_current, double *sample_current, unsigned int matrix_index, unsigned int columns);
 void recursive_eccentricity(unsigned int matrix_index, double *sample_current, double *mi_current, double *sigma_current, double *eccentricity, unsigned int columns);
+double empirical_m(int k);
+struct Micro_Cluster *update_micro_cluster(struct Micro_Cluster *micro_clusters_arr, unsigned int k);
+struct Micro_Cluster
+{
+    int number_of_micro_clusters;
+    int number_of_data_samples;
+    double center;
+    double variance;
+    double eccentricity;
+    double typicality;
+    double density;
+    double outlier_threshold;
+};
