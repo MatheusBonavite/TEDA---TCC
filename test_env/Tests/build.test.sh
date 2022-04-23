@@ -47,3 +47,13 @@ g++ -std=c++11 -w ./Functions/*.c recursive_eccentricity_test.cpp -o recursive_e
 ./recursive_eccentricity_test --list-tests
 ./recursive_eccentricity_test
 rm -f recursive_eccentricity_test
+
+g++ -std=c++11 -w ./Functions/*.c empirical_m_test.cpp -o empirical_m_test
+./empirical_m_test --list-tests
+./empirical_m_test
+rm -f empirical_m_test
+
+g++ -std=c++11 -w ./Functions/*.c micro_cluster_test.cpp -o micro_cluster_test
+./micro_cluster_test --list-tests
+./micro_cluster_test
+rm -f micro_cluster_test
