@@ -17,7 +17,7 @@ struct Micro_Cluster *update_micro_cluster(struct Micro_Cluster *micro_clusters_
 struct Micro_Cluster
 {
     unsigned int number_of_data_samples;
-    double center;
+    double *center;
     double variance;
     double eccentricity;
     double typicality;

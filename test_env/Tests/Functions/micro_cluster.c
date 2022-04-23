@@ -4,7 +4,7 @@
 struct Micro_Cluster
 {
     unsigned int number_of_data_samples;
-    double center;
+    double *center;
     double variance;
     double eccentricity;
     double typicality;
@@ -28,7 +28,11 @@ struct Micro_Cluster *update_micro_cluster(struct Micro_Cluster *micro_clusters_
         {
             (*number_of_micro_clusters) = 1;
             temp[0].number_of_data_samples = 1;
-            temp[0].center = 1.0;
+            temp[0].center = (double *)malloc(columns * sizeof(double));
+            for (unsigned int i = 0; i < columns; i++)
+            {
+                temp[0].center[i] = sample_current[i];
+            }
             temp[0].variance = 0.0;
             return temp;
         }
@@ -39,66 +43,60 @@ struct Micro_Cluster *update_micro_cluster(struct Micro_Cluster *micro_clusters_
         for (unsigned int i = 0; i < (*number_of_micro_clusters); i++)
         {
             unsigned int outlier = 1;
-            double previous_mi = micro_clusters_arr[i].center;
+            double *previous_mi = (double *)malloc(columns * sizeof(double));
+            for (unsigned int j = 0; j < columns; j++)
+            {
+                previous_mi[j] = micro_clusters_arr[i].center[j];
+            }
             double previous_sigma = micro_clusters_arr[i].variance;
             double previous_eccentricity = micro_clusters_arr[i].eccentricity;
             if (micro_clusters_arr[i].number_of_data_samples == 2 || (k + 1) == 2)
             {
-                double *mi_current = &micro_clusters_arr[i].center;
                 double *sigma_current = &micro_clusters_arr[i].variance;
                 double *eccentricity = &micro_clusters_arr[i].eccentricity;
-                recursive_eccentricity(k, sample_current, mi_current, sigma_current, eccentricity, columns);
+                recursive_eccentricity(k, sample_current, micro_clusters_arr[i].center, sigma_current, eccentricity, columns);
                 micro_clusters_arr[i].outlier_threshold_parameter = empirical_m(micro_clusters_arr[i].number_of_data_samples);
 
                 double squared_threshold = micro_clusters_arr[i].outlier_threshold_parameter * micro_clusters_arr[i].outlier_threshold_parameter;
                 int first_condition = (micro_clusters_arr[i].eccentricity / 2.0) > ((squared_threshold + 1.0) / 4.0);
                 int second_condition = micro_clusters_arr[i].variance < r_0;
-                if (first_condition && second_condition)
-                {
-                    outlier = 1;
-                }
-                else
-                {
-                    outlier = 0;
-                }
+                outlier = first_condition && second_condition;
+                printf("Outlier ::: %u \n", outlier);
             }
             else
             {
-                double *mi_current = &micro_clusters_arr[i].center;
                 double *sigma_current = &micro_clusters_arr[i].variance;
                 double *eccentricity = &micro_clusters_arr[i].eccentricity;
-                recursive_eccentricity(k, sample_current, mi_current, sigma_current, eccentricity, columns);
+                recursive_eccentricity(k, sample_current, micro_clusters_arr[i].center, sigma_current, eccentricity, columns);
                 micro_clusters_arr[i].outlier_threshold_parameter = empirical_m(micro_clusters_arr[i].number_of_data_samples);
 
                 double squared_threshold = micro_clusters_arr[i].outlier_threshold_parameter * micro_clusters_arr[i].outlier_threshold_parameter;
-                int first_condition = (micro_clusters_arr[i].eccentricity / 2.0) > ((squared_threshold + 1.0) / 4.0);
-                if (first_condition)
-                {
-                    outlier = 1;
-                }
-                else
-                {
-                    outlier = 0;
-                }
+                outlier = (micro_clusters_arr[i].eccentricity / 2.0) > ((squared_threshold + 1.0) / 4.0);
+                printf("Outlier ::: %u \n", outlier);
             }
 
             if (outlier == 0)
             {
-                printf("Flag is false ::: hence micro_cluster should change \n");
+                printf("Outlier is false ::: hence micro_cluster should change \n");
                 flag = 0;
             }
             else
             {
-                printf("Flag is still true ::: hence micro_cluster should remain the same \n");
-                micro_clusters_arr[i].center = previous_mi;
+                printf("Outlier is still true ::: hence micro_cluster should remain the same \n");
+                for (unsigned int j = 0; j < columns; j++)
+                {
+                    micro_clusters_arr[i].center[j] = previous_mi[j];
+                }
                 micro_clusters_arr[i].variance = previous_sigma;
                 micro_clusters_arr[i].eccentricity = previous_eccentricity;
             }
+            free(previous_mi);
         }
         if (flag == 1)
         {
             printf("Supposed to create a new micro cluster \n");
         }
     }
+    printf("\n\n");
     return micro_clusters_arr;
 }
