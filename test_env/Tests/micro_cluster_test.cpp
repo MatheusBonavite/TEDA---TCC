@@ -10,7 +10,7 @@ TEST_CASE("Micro cluster call")
     unsigned int n = 0;
     unsigned int columns = 1;
     unsigned int rows = 3;
-    double test_1d[3][1] = {{20.0}, {1.0}, {10.0}};
+    double test_1d[3][1] = {{20.0}, {12.0}, {10.0}};
     struct Micro_Cluster *micro_clusters_arr;
     unsigned int *number_of_micro_clusters = &n;
     for (unsigned int i = 0; i < rows; i++)
@@ -23,6 +23,7 @@ TEST_CASE("Micro cluster call")
             printf("center[%u] ::: %lf\n", j, micro_clusters_arr[0].center[j]);
         }
         printf("variance ::: %lf\n", micro_clusters_arr[0].variance);
+        printf("eccentricity ::: %lf\n", micro_clusters_arr[0].eccentricity);
     }
     for (unsigned int j = 0; j < *number_of_micro_clusters; j++)
     {

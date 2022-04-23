@@ -15,6 +15,7 @@ double empirical_m(int k);
 void recursive_eccentricity(unsigned int matrix_index, double *sample_current, double *mi_current, double *sigma_current, double *eccentricity, unsigned int columns);
 struct Micro_Cluster *update_micro_cluster(struct Micro_Cluster *micro_clusters_arr, unsigned int *number_of_micro_clusters, double *sample_current, unsigned int k, unsigned int columns)
 {
+    printf("\n \t CALLING FUNC \t \n");
     double r_0 = 0.001;
     if ((k + 1) == 1)
     {
@@ -89,6 +90,7 @@ struct Micro_Cluster *update_micro_cluster(struct Micro_Cluster *micro_clusters_
                 }
                 micro_clusters_arr[i].variance = previous_sigma;
                 micro_clusters_arr[i].eccentricity = previous_eccentricity;
+                flag = 1;
             }
             free(previous_mi);
         }
