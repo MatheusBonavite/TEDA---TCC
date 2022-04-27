@@ -10,7 +10,7 @@ TEST_CASE("Micro cluster call")
     unsigned int n = 0;
     unsigned int columns = 1;
     unsigned int rows = 3;
-    double test_1d[3][1] = {{20.0}, {12.0}, {10.0}};
+    double test_1d[3][1] = {{20.0}, {19.99}, {10.0}};
     struct Micro_Cluster *micro_clusters_arr;
     unsigned int *number_of_micro_clusters = &n;
     for (unsigned int i = 0; i < rows; i++)
