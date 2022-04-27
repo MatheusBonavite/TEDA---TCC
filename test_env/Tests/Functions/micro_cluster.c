@@ -49,39 +49,50 @@ struct Micro_Cluster *update_micro_cluster(struct Micro_Cluster *micro_clusters_
         for (unsigned int i = 0; i < (*number_of_micro_clusters); i++)
         {
             unsigned int outlier = 1;
-            double *previous_mi = (double *)malloc(columns * sizeof(double));
-            for (unsigned int j = 0; j < columns; j++)
-            {
-                previous_mi[j] = micro_clusters_arr[i].center[j];
+            struct Micro_Cluster temp;
+            temp.number_of_data_samples = micro_clusters_arr[i].number_of_data_samples;
+            temp.variance = micro_clusters_arr[i].variance;
+            temp.eccentricity = micro_clusters_arr[i].eccentricity;
+            temp.center = (double *) malloc(columns*sizeof(double));
+            for(unsigned int j=0; j<columns; j++){
+                temp.center[j] = micro_clusters_arr[i].center[j];
             }
-            double previous_sigma = micro_clusters_arr[i].variance;
-            double previous_eccentricity = micro_clusters_arr[i].eccentricity;
-            if (micro_clusters_arr[i].number_of_data_samples == 1)
-            {
-                double *sigma_current = &micro_clusters_arr[i].variance;
-                double *eccentricity = &micro_clusters_arr[i].eccentricity;
-                printf("\n1) Variance before ::: %lf\n", micro_clusters_arr[i].variance);
-                printf("\n2) Eccentricity before ::: %lf\n", micro_clusters_arr[i].eccentricity);
-                recursive_eccentricity(k, sample_current, micro_clusters_arr[i].center, sigma_current, eccentricity, columns); // 0
-                printf("\n1) Variance after ::: %lf\n", micro_clusters_arr[i].variance);
-                printf("\n2) Eccentricity after ::: %lf\n", micro_clusters_arr[i].eccentricity);
-                micro_clusters_arr[i].outlier_threshold_parameter = empirical_m(2); // 16.0
+            printf("\n1) Variance before ::: %lf\n", temp.variance);
+            printf("\n2) Eccentricity before ::: %lf\n", temp.eccentricity);
+            printf("\n3) Center before ::: \n");
+            for(unsigned int j=0; j<columns; j++){
+                printf("center[%u]: %lf\n", j, temp.center[j]);
+            }
+            recursive_eccentricity(temp.number_of_data_samples, sample_current, temp.center, &temp.variance, &temp.eccentricity, columns);
+            printf("\n1) Variance after ::: %lf\n", temp.variance);
+            printf("\n2) Eccentricity after ::: %lf\n", temp.eccentricity);
+            printf("\n3) Center after ::: \n");
+            for(unsigned int j=0; j<columns; j++){
+                printf("center[%u]: %lf\n", j, temp.center[j]);
+            }
 
-                double squared_threshold = micro_clusters_arr[i].outlier_threshold_parameter * micro_clusters_arr[i].outlier_threshold_parameter;
-                int first_condition = (micro_clusters_arr[i].eccentricity / 2.0) > ((squared_threshold + 1.0) / 4.0);
-                int second_condition = micro_clusters_arr[i].variance > r_0;
+            if (temp.number_of_data_samples == 1)
+            {
+                temp.outlier_threshold_parameter = empirical_m(2);
+                double squared_threshold = temp.outlier_threshold_parameter * temp.outlier_threshold_parameter;
+                int first_condition = (temp.eccentricity / 2.0) > ((squared_threshold + 1.0) / 4.0);
+                int second_condition = temp.variance > r_0;
                 outlier = first_condition || second_condition;
                 printf("Outlier ::: %u \n", outlier);
             }
             else
             {
-                double *sigma_current = &micro_clusters_arr[i].variance;
-                double *eccentricity = &micro_clusters_arr[i].eccentricity;
-                recursive_eccentricity(k, sample_current, micro_clusters_arr[i].center, sigma_current, eccentricity, columns);
-                micro_clusters_arr[i].outlier_threshold_parameter = empirical_m(micro_clusters_arr[i].number_of_data_samples);
+                temp.outlier_threshold_parameter = empirical_m(temp.number_of_data_samples + 1.0);
 
-                double squared_threshold = micro_clusters_arr[i].outlier_threshold_parameter * micro_clusters_arr[i].outlier_threshold_parameter;
-                outlier = (micro_clusters_arr[i].eccentricity / 2.0) > ((squared_threshold + 1.0) / 4.0);
+                double squared_threshold = temp.outlier_threshold_parameter * temp.outlier_threshold_parameter;
+                
+                outlier = (temp.eccentricity / 2.0) > ( ((squared_threshold + 1.0)/(2*(temp.number_of_data_samples + 1.0))) );
+
+                printf("2*(temp.number_of_data_samples + 1.0) >>> %lf \n", 2*(temp.number_of_data_samples + 1.0));
+                printf("temp.outlier_threshold_parameter >>> %lf \n", temp.outlier_threshold_parameter);
+                printf("squared_threshold >>> %lf \n", squared_threshold);
+                printf("eccentricity/2 value >>> %lf \n", (temp.eccentricity / 2.0));
+                printf("outlier value >>> %lf \n", ((squared_threshold + 1.0)/(2*(temp.number_of_data_samples + 1.0))));
                 printf("Outlier ::: %u \n", outlier);
             }
 
@@ -89,23 +100,32 @@ struct Micro_Cluster *update_micro_cluster(struct Micro_Cluster *micro_clusters_
             {
                 printf("Outlier is false ::: hence micro_cluster should change according to 15\n");
                 flag = 0;
-            }
-            else
-            {
-                printf("Outlier is still true ::: hence micro_cluster should change according to 16 \n");
-                for (unsigned int j = 0; j < columns; j++)
-                {
-                    micro_clusters_arr[i].center[j] = previous_mi[j];
+                micro_clusters_arr[i].variance = temp.variance;
+                micro_clusters_arr[i].eccentricity = temp.eccentricity;
+                micro_clusters_arr[i].number_of_data_samples = temp.number_of_data_samples + 1.0;
+                for(unsigned int j=0; j<columns; j++){
+                    micro_clusters_arr[i].center[j] = temp.center[j];
                 }
-                micro_clusters_arr[i].variance = previous_sigma;
-                micro_clusters_arr[i].eccentricity = previous_eccentricity;
-                flag = 1;
             }
-            free(previous_mi);
+            free(temp.center);
         }
         if (flag == 1)
         {
-            printf("Supposed to create a new micro cluster \n");
+            (*number_of_micro_clusters) += 1;
+            struct Micro_Cluster *new_micro_arr = (struct Micro_Cluster *)realloc(micro_clusters_arr, (*number_of_micro_clusters)*sizeof(struct Micro_Cluster));
+            if (new_micro_arr == NULL)
+            {
+                printf("Cannot allocate more memory.\n");
+                exit(1);
+            }
+            micro_clusters_arr = new_micro_arr;
+            micro_clusters_arr[(*number_of_micro_clusters)-1].number_of_data_samples = 1;
+            micro_clusters_arr[(*number_of_micro_clusters)-1].center = (double *)malloc(columns * sizeof(double));
+            for (unsigned int i = 0; i < columns; i++)
+            {
+                micro_clusters_arr[(*number_of_micro_clusters)-1].center[i] = sample_current[i];
+            }
+            micro_clusters_arr[(*number_of_micro_clusters)-1].variance = 0.0;
         }
     }
     printf("\n\n");

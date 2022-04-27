@@ -9,21 +9,23 @@ TEST_CASE("Micro cluster call")
     unsigned int samples = 1;
     unsigned int n = 0;
     unsigned int columns = 1;
-    unsigned int rows = 3;
-    double test_1d[3][1] = {{20.0}, {19.99}, {10.0}};
+    unsigned int rows = 4;
+    double test_1d[4][1] = {{20.0}, {19.99}, {12.0}, {11.99}};
     struct Micro_Cluster *micro_clusters_arr;
     unsigned int *number_of_micro_clusters = &n;
     for (unsigned int i = 0; i < rows; i++)
     {
         micro_clusters_arr = update_micro_cluster(micro_clusters_arr, number_of_micro_clusters, test_1d[i], i, columns);
-        printf("First Microcluster ::: \n");
-        printf("number_of_data_samples ::: %d\n", micro_clusters_arr[0].number_of_data_samples);
-        for (unsigned int j = 0; j < *number_of_micro_clusters; j++)
-        {
-            printf("center[%u] ::: %lf\n", j, micro_clusters_arr[0].center[j]);
+    }
+    printf("Number of micro_clusters are :::: %u\n", *number_of_micro_clusters);
+    for(unsigned int i=0; i < *number_of_micro_clusters; i++){
+        printf("\n1) Micro[%u].Variance ::: %lf\n", i, micro_clusters_arr[i].variance);
+        printf("\n2) Micro[%u].Eccentricity ::: %lf\n",  i, micro_clusters_arr[i].eccentricity);
+        printf("\n3) Micro[%u].Center ::: \n", i);
+        for(unsigned int j=0; j<columns; j++){
+            printf("Micro[%u].Center ::: %lf\n", i, micro_clusters_arr[i].center[j]);
         }
-        printf("variance ::: %lf\n", micro_clusters_arr[0].variance);
-        printf("eccentricity ::: %lf\n", micro_clusters_arr[0].eccentricity);
+        printf("===============================================================================\n");
     }
     for (unsigned int j = 0; j < *number_of_micro_clusters; j++)
     {
