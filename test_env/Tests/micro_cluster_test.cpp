@@ -43,7 +43,7 @@ TEST_CASE("Micro cluster call - two dimensional")
     unsigned int columns = 2;
     unsigned int n = 0;
     double test_2d[7][2] = {
-        {20.2, 3.0}, {6.4, 11.6}, {8.2, 2.2}, {11.2, 5.2}, {6.2, 0.2}, {1.0, 4.8}, {2.4, 3.8}};
+        {20.2, 3.0}, {20.19, 3.01}, {20.18, 3.03}, {11.2, 5.2}, {6.2, 0.2}, {1.0, 4.8}, {2.4, 3.8}};
     double *matrix = matrix_allocation(rows, columns);
     struct Micro_Cluster *micro_clusters_arr;
     unsigned int *number_of_micro_clusters = &n;
