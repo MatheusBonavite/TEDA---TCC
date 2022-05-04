@@ -15,7 +15,7 @@ TEST_CASE("Adjency matrix test for 4x(1-x)")
         exit(1);
     }
     unsigned int problem_dimension = 2;
-    unsigned int rows = 100000;
+    unsigned int rows = 50000;
     unsigned int columns = 2;
     unsigned int n = 0;
     double *matrix = matrix_allocation(rows, columns);
