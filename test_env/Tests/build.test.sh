@@ -1,4 +1,4 @@
-g++ -std=c++11 -w ./Functions/*.c bfs_grouping_test.cpp -o bfs_grouping_test
-./bfs_grouping_test --list-tests
-./bfs_grouping_test
-rm -f bfs_grouping_test
+g++ -std=c++11 -w ./Functions/*.c adjency_matrix_test.cpp -o adjency_matrix_test
+./adjency_matrix_test --list-tests
+./adjency_matrix_test
+rm -f adjency_matrix_test
