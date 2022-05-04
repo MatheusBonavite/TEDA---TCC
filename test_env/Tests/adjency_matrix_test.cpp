@@ -27,10 +27,9 @@ TEST_CASE("Adjency matrix test for 4x(1-x)")
     for (unsigned int i = 0; i < rows; i++)
     {
         double *test_2d = (double *)calloc(1, columns * sizeof(double));
-        x0 = 4.0 * (x0) * (1.0 - x0);
-        x1 = 4.0 * (x1) * (1.0 - x1);
         test_2d[0] = x0;
-        test_2d[1] = x1;
+        x0 = 4.0 * (x0) * (1.0 - x0);
+        test_2d[1] = x0;
         micro_clusters_arr = update_micro_cluster(micro_clusters_arr, number_of_micro_clusters, test_2d, i, columns);
         free(test_2d);
     }
@@ -43,7 +42,7 @@ TEST_CASE("Adjency matrix test for 4x(1-x)")
         {
             sprintf(buffer, "%s {%lf}", buffer, micro_clusters_arr[i].center[j]);
         }
-        sprintf(buffer, "%s (%lf)\n", buffer, micro_clusters_arr[i].variance);
+        sprintf(buffer, "%s (%lf)\n", buffer, (double)empirical_m(micro_clusters_arr[i].number_of_data_samples) * sqrt(micro_clusters_arr[i].variance));
 
         int file_i = 0;
         while (file_i < strlen(buffer))
