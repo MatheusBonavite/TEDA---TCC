@@ -36,8 +36,11 @@ for i in range(1000):
     ax.scatter((first_coordinate), (second_coordinate), color='y', s=(150./fig.dpi)**2)
 
 for i in range(len(x_vec)):
-    circles = plt.Circle((x_vec[i][0], x_vec[i][1]), rad_vec[i], color='r', fill=False)
+    if rad_vec[i] != 0.0 :
+        circles = plt.Circle((x_vec[i][0], x_vec[i][1]), rad_vec[i], color='r', fill=False)
+    else:
+        circles = plt.Circle((x_vec[i][0], x_vec[i][1]), 0.025, color='b', fill=False)
     ax.add_patch(circles)
 
-fig.savefig('plot_micro_clusters.png')
+fig.savefig('plot_micro_clusters_2.png')
 filehandle.close()

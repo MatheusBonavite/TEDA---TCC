@@ -15,7 +15,7 @@ TEST_CASE("Adjency matrix test for 4x(1-x)")
         exit(1);
     }
     unsigned int problem_dimension = 2;
-    unsigned int rows = 10000;
+    unsigned int rows = 1000;
     unsigned int columns = 2;
     unsigned int n = 0;
     double *matrix = matrix_allocation(rows, columns);
@@ -29,7 +29,7 @@ TEST_CASE("Adjency matrix test for 4x(1-x)")
     for (unsigned int i = 0; i < rows; i++)
     {
         double *test_2d = (double *)calloc(1, columns * sizeof(double));
-        if (i >= 5000)
+        if (i >= 500)
         {
             center_index = 1;
         }
@@ -49,7 +49,7 @@ TEST_CASE("Adjency matrix test for 4x(1-x)")
 
     for (unsigned int i = 0; i < *number_of_micro_clusters; i++)
     {
-        char *buffer = (char *)malloc(sizeof(char) * 100);
+        char *buffer = (char *)malloc(sizeof(char) * 125);
         if (buffer == NULL)
         {
             printf("Could not allocate memory \n");
@@ -60,8 +60,8 @@ TEST_CASE("Adjency matrix test for 4x(1-x)")
         {
             sprintf(buffer, "%s {%lf}", buffer, micro_clusters_arr[i].center[j]);
         }
-        sprintf(buffer, "%s (%lf)\n", buffer, (double)empirical_m(micro_clusters_arr[i].number_of_data_samples) * sqrt(micro_clusters_arr[i].variance));
-
+        sprintf(buffer, "%s (%lf)", buffer, sqrt(micro_clusters_arr[i].variance));
+        sprintf(buffer, "%s [%lf]\n", buffer, (2.0 / micro_clusters_arr[i].eccentricity));
         int file_i = 0;
         while (file_i < strlen(buffer))
         {
