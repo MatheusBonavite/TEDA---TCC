@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 
 double two_vec_euclidean_distance(double *a, double *b, unsigned int columns);
 void int_zero_matrix_initializer(unsigned int *matrix, unsigned int rows, unsigned int columns);
@@ -28,7 +29,7 @@ unsigned int *adjency_matrix(struct Micro_Cluster *micro_clusters_arr, unsigned 
                 continue;
             }
             dist_centers = two_vec_euclidean_distance(micro_clusters_arr[i].center, micro_clusters_arr[j].center, columns);
-            variance_sum = 2.0 * (micro_clusters_arr[i].variance + micro_clusters_arr[j].variance);
+            variance_sum = 2.0 * (sqrt(micro_clusters_arr[i].variance) + sqrt(micro_clusters_arr[j].variance));
             unsigned int resp_condition = dist_centers < variance_sum;
             adj_nodes[(number_of_micro_clusters * i) + j] = resp_condition;
             adj_nodes[(number_of_micro_clusters * j) + i] = resp_condition;

@@ -17,15 +17,22 @@ while True:
         rad_vec.append(*[float(value) for value in rad])
 
 fig, ax = plt.subplots()
-ax.set_xlim((-2, 2))
-ax.set_ylim((-2, 2))
+ax.set_xlim((0, 4))
+ax.set_ylim((0, 4))
 
 x0 = 0.33
 x1 = 0.315
-for _ in range(30000):
-    first_coordinate = x0
+for i in range(30000):
+    centers = []
+    if i >= 0 and i < 15000:
+        centers = [2.0, 2.0]
+    if i >= 15000:       
+        centers = [0.5, 2.0]
+        
     x0 = 4.0 * (x0) * (1.0 - x0)
-    second_coordinate = x0
+    x1 = 4.0 * (x1) * (1.0 - x1)
+    first_coordinate = centers[0] + x0
+    second_coordinate = centers[1] + x1
     ax.scatter((first_coordinate), (second_coordinate), color='y', s=(150./fig.dpi)**2)
 
 for i in range(len(x_vec)):

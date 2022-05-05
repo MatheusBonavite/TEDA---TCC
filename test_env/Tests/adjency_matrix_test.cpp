@@ -8,7 +8,7 @@
 
 TEST_CASE("Adjency matrix test for 4x(1-x)")
 {
-    FILE *file = fopen("./plots/adjency_test.txt", "w");
+    FILE *file = fopen("./plots/adjency_test.txt", "w+");
     if (file == NULL)
     {
         printf("Could not fopen! \n");
@@ -24,19 +24,37 @@ TEST_CASE("Adjency matrix test for 4x(1-x)")
 
     double x0 = 0.33;
     double x1 = 0.315;
+    double centers[2][2] = {{2.0, 2.0}, {0.5, 2.0}};
+    unsigned int center_index = 0;
     for (unsigned int i = 0; i < rows; i++)
     {
         double *test_2d = (double *)calloc(1, columns * sizeof(double));
-        test_2d[0] = x0;
+        if (i >= 15000)
+        {
+            center_index = 1;
+        }
+
+        if (test_2d == NULL)
+        {
+            printf("Could not allocate memory \n");
+            exit(1);
+        }
         x0 = 4.0 * (x0) * (1.0 - x0);
-        test_2d[1] = x0;
+        x1 = 4.0 * (x1) * (1.0 - x1);
+        test_2d[0] = centers[center_index][0] + x0;
+        test_2d[1] = centers[center_index][1] + x1;
         micro_clusters_arr = update_micro_cluster(micro_clusters_arr, number_of_micro_clusters, test_2d, i, columns);
         free(test_2d);
     }
 
     for (unsigned int i = 0; i < *number_of_micro_clusters; i++)
     {
-        char *buffer;
+        char *buffer = (char *)malloc(sizeof(char) * 100);
+        if (buffer == NULL)
+        {
+            printf("Could not allocate memory \n");
+            exit(1);
+        }
         sprintf(buffer, "[%u]:", i);
         for (unsigned int j = 0; j < columns; j++)
         {
@@ -55,6 +73,7 @@ TEST_CASE("Adjency matrix test for 4x(1-x)")
             }
             file_i++;
         }
+        free(buffer);
     }
 
     unsigned int *adj_node = adjency_matrix(micro_clusters_arr, *number_of_micro_clusters, columns);
