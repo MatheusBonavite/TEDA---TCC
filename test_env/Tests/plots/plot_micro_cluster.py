@@ -22,11 +22,11 @@ ax.set_ylim((0, 4))
 
 x0 = 0.33
 x1 = 0.315
-for i in range(30000):
+for i in range(10000):
     centers = []
-    if i >= 0 and i < 15000:
+    if i >= 0 and i < 5000:
         centers = [2.0, 2.0]
-    if i >= 15000:       
+    if i >= 5000:       
         centers = [0.5, 2.0]
         
     x0 = 4.0 * (x0) * (1.0 - x0)

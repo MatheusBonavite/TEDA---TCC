@@ -36,6 +36,13 @@ unsigned int bfs_grouping(struct Macro_Clusters *macro_clusters_arr, unsigned in
             }
             front++;
         }
+        printf("Group here the macro-cluster!\n");
+        for (unsigned int wu = 0; wu < rear; wu++)
+        {
+            printf("%u\n", queue[wu]);
+        }
+        printf("%u\n", start_point);
+        printf("\n");
         printf("\n\n\n");
         free(queue);
     }
