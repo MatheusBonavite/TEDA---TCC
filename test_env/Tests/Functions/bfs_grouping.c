@@ -7,7 +7,7 @@ struct Macro_Clusters
     unsigned int n_micro_clusters;
 };
 
-struct Macro_Clusters *bfs_grouping(struct Macro_Clusters *macro_clusters_arr, unsigned int *adjency_matrix, unsigned int *number_of_macro_clusters, unsigned int number_of_micro_clusters, unsigned int columns)
+struct Macro_Clusters *bfs_grouping(struct Macro_Clusters *macro_clusters_arr, unsigned int *adjency_matrix, unsigned int *number_of_macro_clusters, unsigned int number_of_micro_clusters)
 {
     unsigned int *visited = (unsigned int *)calloc((number_of_micro_clusters), sizeof(unsigned int));
     for (unsigned int w = 0; w < number_of_micro_clusters; w++)
@@ -27,7 +27,7 @@ struct Macro_Clusters *bfs_grouping(struct Macro_Clusters *macro_clusters_arr, u
             start_point = queue[front];
             for (unsigned int i = 0; i < number_of_micro_clusters; i++)
             {
-                if (adjency_matrix[(start_point * columns) + i] == 1 && visited[i] == 0)
+                if (adjency_matrix[(start_point * number_of_micro_clusters) + i] == 1 && visited[i] == 0)
                 {
                     queue[++rear] = i;
                     visited[i] = 1;

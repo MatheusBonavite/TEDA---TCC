@@ -29,7 +29,7 @@ TEST_CASE("Bfs grouping for simple graph")
             matrix[(columns * i) + j] = test_graph[i][j];
         }
     }
-    macro_clusters_arr = bfs_grouping(macro_clusters_arr, matrix, number_of_macro_clusters, rows, columns);
+    macro_clusters_arr = bfs_grouping(macro_clusters_arr, matrix, number_of_macro_clusters, rows);
     printf("\n\n\n");
     for (unsigned int i = 0; i < *number_of_macro_clusters; i++)
     {

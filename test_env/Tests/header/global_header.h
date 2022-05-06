@@ -17,7 +17,7 @@ double two_vec_euclidean_distance(double *a, double *b, unsigned int columns);
 void int_zero_matrix_initializer(unsigned int *matrix, unsigned int rows, unsigned int columns);
 struct Micro_Cluster *update_micro_cluster(struct Micro_Cluster *micro_clusters_arr, unsigned int *number_of_micro_clusters, double *sample_current, unsigned int k, unsigned int columns);
 unsigned int *adjency_matrix(struct Micro_Cluster *micro_clusters_arr, unsigned int number_of_micro_clusters, unsigned int columns);
-struct Macro_Clusters *bfs_grouping(struct Macro_Clusters *macro_clusters_arr, unsigned int *adjency_matrix, unsigned int *number_of_macro_clusters, unsigned int number_of_micro_clusters, unsigned int columns);
+struct Macro_Clusters *bfs_grouping(struct Macro_Clusters *macro_clusters_arr, unsigned int *adjency_matrix, unsigned int *number_of_macro_clusters, unsigned int number_of_micro_clusters);
 unsigned int *int_matrix_allocation(unsigned int rows, unsigned int columns);
 struct Micro_Cluster
 {
