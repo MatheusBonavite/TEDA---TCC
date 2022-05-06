@@ -17,16 +17,16 @@ while True:
         rad_vec.append(*[float(value) for value in rad])
 
 fig, ax = plt.subplots()
-ax.set_xlim((0, 4))
+ax.set_xlim((0, 4.5))
 ax.set_ylim((0, 4))
 
 x0 = 0.33
 x1 = 0.315
-for i in range(1000):
+for i in range(30000):
     centers = []
-    if i >= 0 and i < 500:
-        centers = [2.0, 2.0]
-    if i >= 500:       
+    if i >= 0 and i < 15000:
+        centers = [3.0, 2.0]
+    if i >= 15000:       
         centers = [0.5, 2.0]
         
     x0 = 4.0 * (x0) * (1.0 - x0)
@@ -36,7 +36,7 @@ for i in range(1000):
     ax.scatter((first_coordinate), (second_coordinate), color='y', s=(150./fig.dpi)**2)
 
 for i in range(len(x_vec)):
-    circles = plt.Circle((x_vec[i][0], x_vec[i][1]), rad_vec[i], color='r', fill=False)
+    circles = plt.Circle((x_vec[i][0], x_vec[i][1]), rad_vec[i], color='b', fill=False)
     ax.add_patch(circles)
 
 fig.savefig('plot_micro_clusters.png')

@@ -12,14 +12,14 @@ TEST_CASE("Bfs grouping for simple graph")
     unsigned int rows = 8;
     unsigned int columns = 8;
     unsigned int test_graph[8][8] = {
-        {0, 1, 1, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 1, 0, 0},
-        {0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 1},
-        {0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0},
+        {0, 1, 1, 0, 0, 0, 0, 0},
+        {1, 0, 0, 0, 0, 0, 0, 0},
+        {1, 0, 0, 1, 0, 0, 0, 0},
+        {0, 0, 1, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 1, 0, 0},
+        {0, 0, 0, 0, 1, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0},
     };
     unsigned int *matrix = int_matrix_allocation(rows, columns);
     for (int i = 0; i < rows; i++)

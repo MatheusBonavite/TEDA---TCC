@@ -25,8 +25,6 @@ struct Macro_Clusters *bfs_grouping(struct Macro_Clusters *macro_clusters_arr, u
         while (front <= rear)
         {
             start_point = queue[front];
-            printf("Point : %u \n", start_point);
-
             for (unsigned int i = 0; i < number_of_micro_clusters; i++)
             {
                 if (adjency_matrix[(start_point * columns) + i] == 1 && visited[i] == 0)
@@ -39,7 +37,6 @@ struct Macro_Clusters *bfs_grouping(struct Macro_Clusters *macro_clusters_arr, u
         }
         if (*number_of_macro_clusters == 0)
         {
-            printf("FIRST alloc for MACRO! \n");
             macro_clusters_arr = (struct Macro_Clusters *)calloc(1, sizeof(struct Macro_Clusters));
             if (macro_clusters_arr == NULL)
             {
@@ -57,10 +54,6 @@ struct Macro_Clusters *bfs_grouping(struct Macro_Clusters *macro_clusters_arr, u
             }
             macro_clusters_arr = new_macro_arr;
         }
-
-        printf("Rear value is: %u \n", rear);
-        printf("\n\n\n");
-
         macro_clusters_arr[*number_of_macro_clusters].group_of_micro_clusters = (unsigned int *)calloc(rear + 1, sizeof(unsigned int));
         macro_clusters_arr[*number_of_macro_clusters].n_micro_clusters = rear + 1;
 
@@ -72,10 +65,8 @@ struct Macro_Clusters *bfs_grouping(struct Macro_Clusters *macro_clusters_arr, u
         for (unsigned int wu = 0; wu < rear; wu++)
         {
             macro_clusters_arr[*number_of_macro_clusters].group_of_micro_clusters[wu] = queue[wu];
-            printf("group_of_micro_clusters[%u]: %u \n", wu, macro_clusters_arr[*number_of_macro_clusters].group_of_micro_clusters[wu]);
         }
         macro_clusters_arr[*number_of_macro_clusters].group_of_micro_clusters[rear] = start_point;
-        printf("group_of_micro_clusters[%u]: %u \n", rear, macro_clusters_arr[*number_of_macro_clusters].group_of_micro_clusters[rear]);
         *number_of_macro_clusters = *number_of_macro_clusters + 1;
 
         free(queue);
