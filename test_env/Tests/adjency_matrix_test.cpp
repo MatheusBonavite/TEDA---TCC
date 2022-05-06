@@ -18,7 +18,7 @@ TEST_CASE("Adjency matrix test for 4x(1-x)")
         exit(1);
     }
     unsigned int problem_dimension = 2;
-    unsigned int rows = 100;
+    unsigned int rows = 30000;
     unsigned int columns = 2;
     unsigned int n = 0;
     double *matrix = matrix_allocation(rows, columns);
@@ -32,7 +32,7 @@ TEST_CASE("Adjency matrix test for 4x(1-x)")
     for (unsigned int i = 0; i < rows; i++)
     {
         double *test_2d = (double *)calloc(1, columns * sizeof(double));
-        if (i >= 50)
+        if (i >= 15000)
         {
             center_index = 1;
         }
@@ -51,7 +51,6 @@ TEST_CASE("Adjency matrix test for 4x(1-x)")
     }
 
     unsigned int *adj_node = adjency_matrix(micro_clusters_arr, *number_of_micro_clusters, columns);
-    printf("BACK TO CALLER ::: adj_nodes[10][16] ::: %u\n", adj_node[(*number_of_micro_clusters * 10) + 16]);
     unsigned int hits = 0;
     unsigned int misses = 0;
     for (unsigned int w = 0; w < *number_of_micro_clusters; w++)

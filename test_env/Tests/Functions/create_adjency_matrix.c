@@ -57,6 +57,5 @@ unsigned int *adjency_matrix(struct Micro_Cluster *micro_clusters_arr, unsigned 
             }
         }
     }
-    printf("adj_nodes[10][16] ::: %u\n", adj_nodes[(number_of_micro_clusters * 10) + 16]);
     return adj_nodes;
 }

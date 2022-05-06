@@ -7,6 +7,28 @@ x_vec = []
 rad_vec = []
 color_scheme = []
 
+def value_for_color(value):
+    if value == '0':
+        return 'b'
+    if value == '1':
+        return 'g'
+    if value == '2':
+        return 'r'
+    if value == '3':
+        return 'c'
+    if value == '4':
+        return 'm'
+    if value == '5':
+        return 'y'
+    if value == '6':
+        return 'k'
+    if value == '7':
+        return 'pink'
+    if value == '8':
+        return 'darkcyan'
+    if value == '9':
+        return 'darkgreen'
+
 while True:
     line = filehandle.readline()
     if not line:
@@ -19,7 +41,7 @@ while True:
     if rad:
         rad_vec.append(*[float(value) for value in rad])
     if col:
-        color_scheme.append(*['b' if value == '10' else 'g' if value == '9' else 'r' for value in col])
+        color_scheme.append(*[value_for_color(value) for value in col])
 
 fig, ax = plt.subplots()
 ax.set_xlim((0, 4.5))
@@ -28,11 +50,11 @@ ax.grid()
 
 x0 = 0.33
 x1 = 0.315
-for i in range(100):
+for i in range(30000):
     centers = []
-    if i >= 0 and i < 50:
+    if i >= 0 and i < 15000:
         centers = [3.0, 2.0]
-    if i >= 50:       
+    if i >= 15000:
         centers = [0.5, 2.0]
         
     x0 = 4.0 * (x0) * (1.0 - x0)
