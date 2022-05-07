@@ -4,9 +4,12 @@
 #include <stdlib.h>
 #include "./header/global_header.h"
 
+// TO-DO : REFACTOR THIS PARTICULAR TEST (THE OTHERS NEED THIS TOO...)
+
 TEST_CASE("Bfs grouping for simple graph")
 {
     struct Macro_Clusters *macro_clusters_arr;
+    struct Micro_Cluster *micro_clusters_arr;
     unsigned int n = 0;
     unsigned int *number_of_macro_clusters = &n;
     unsigned int rows = 8;
@@ -29,7 +32,7 @@ TEST_CASE("Bfs grouping for simple graph")
             matrix[(columns * i) + j] = test_graph[i][j];
         }
     }
-    macro_clusters_arr = bfs_grouping(macro_clusters_arr, matrix, number_of_macro_clusters, rows);
+    macro_clusters_arr = bfs_grouping(macro_clusters_arr, micro_clusters_arr, matrix, number_of_macro_clusters, rows);
     printf("\n\n\n");
     for (unsigned int i = 0; i < *number_of_macro_clusters; i++)
     {

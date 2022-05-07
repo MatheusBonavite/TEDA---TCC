@@ -26,8 +26,7 @@ def value_for_color(value):
         return 'pink'
     if value == '8':
         return 'darkcyan'
-    if value == '9':
-        return 'darkgreen'
+    return 'darkgreen'
 
 while True:
     line = filehandle.readline()

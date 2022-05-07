@@ -5,9 +5,21 @@ struct Macro_Clusters
 {
     unsigned int *group_of_micro_clusters;
     unsigned int n_micro_clusters;
+    double micro_eccentricity_mean;
 };
 
-struct Macro_Clusters *bfs_grouping(struct Macro_Clusters *macro_clusters_arr, unsigned int *adjency_matrix, unsigned int *number_of_macro_clusters, unsigned int number_of_micro_clusters)
+struct Micro_Cluster
+{
+    unsigned int number_of_data_samples;
+    double *center;
+    double variance;
+    double eccentricity;
+    double typicality;
+    double density;
+    double outlier_threshold_parameter;
+};
+void recursive_mean(double *mi_current, double *sample_current, unsigned int matrix_index, unsigned int columns);
+struct Macro_Clusters *bfs_grouping(struct Macro_Clusters *macro_clusters_arr, struct Micro_Cluster *micro_clusters_arr, unsigned int *adjency_matrix, unsigned int *number_of_macro_clusters, unsigned int number_of_micro_clusters)
 {
     unsigned int *visited = (unsigned int *)calloc((number_of_micro_clusters), sizeof(unsigned int));
     for (unsigned int w = 0; w < number_of_micro_clusters; w++)
@@ -54,6 +66,8 @@ struct Macro_Clusters *bfs_grouping(struct Macro_Clusters *macro_clusters_arr, u
             }
             macro_clusters_arr = new_macro_arr;
         }
+        double density_mean = 0.0;
+        double *current_density_mean = &density_mean;
         macro_clusters_arr[*number_of_macro_clusters].group_of_micro_clusters = (unsigned int *)calloc(rear + 1, sizeof(unsigned int));
         macro_clusters_arr[*number_of_macro_clusters].n_micro_clusters = rear + 1;
 
@@ -64,9 +78,15 @@ struct Macro_Clusters *bfs_grouping(struct Macro_Clusters *macro_clusters_arr, u
         }
         for (unsigned int wu = 0; wu < rear; wu++)
         {
-            macro_clusters_arr[*number_of_macro_clusters].group_of_micro_clusters[wu] = queue[wu];
+            unsigned int micro_index = queue[wu];
+            double *current_eccentricity = &(micro_clusters_arr[micro_index].eccentricity);
+            macro_clusters_arr[*number_of_macro_clusters].group_of_micro_clusters[wu] = micro_index;
+            recursive_mean(current_density_mean, current_eccentricity, wu, 1);
         }
+        double *current_eccentricity = &(micro_clusters_arr[start_point].eccentricity);
         macro_clusters_arr[*number_of_macro_clusters].group_of_micro_clusters[rear] = start_point;
+        recursive_mean(current_density_mean, current_eccentricity, rear, 1);
+        macro_clusters_arr[*number_of_macro_clusters].micro_eccentricity_mean = *current_density_mean;
         *number_of_macro_clusters = *number_of_macro_clusters + 1;
 
         free(queue);

@@ -18,7 +18,7 @@ TEST_CASE("Adjency matrix test for 4x(1-x)")
         exit(1);
     }
     unsigned int problem_dimension = 2;
-    unsigned int rows = 30000;
+    unsigned int rows = 250;
     unsigned int columns = 2;
     unsigned int n = 0;
     double *matrix = matrix_allocation(rows, columns);
@@ -32,7 +32,7 @@ TEST_CASE("Adjency matrix test for 4x(1-x)")
     for (unsigned int i = 0; i < rows; i++)
     {
         double *test_2d = (double *)calloc(1, columns * sizeof(double));
-        if (i >= 15000)
+        if (i >= 50)
         {
             center_index = 1;
         }
@@ -70,7 +70,7 @@ TEST_CASE("Adjency matrix test for 4x(1-x)")
     printf("Amount of hits ::: %u \n", hits);
     printf("Amount of misses ::: %u \n", misses);
     printf("\n\n\n");
-    macro_clusters_arr = bfs_grouping(macro_clusters_arr, adj_node, number_of_macro_clusters, *number_of_micro_clusters);
+    macro_clusters_arr = bfs_grouping(macro_clusters_arr, micro_clusters_arr, adj_node, number_of_macro_clusters, *number_of_micro_clusters);
     printf("Amount of macro ::: %u \n", *number_of_macro_clusters);
     printf("Amount of micro ::: %u \n", *number_of_micro_clusters);
     printf("\n\n\n");
@@ -78,7 +78,7 @@ TEST_CASE("Adjency matrix test for 4x(1-x)")
     {
         for (unsigned int w = 0; w < macro_clusters_arr[i].n_micro_clusters; w++)
         {
-            char *buffer = (char *)malloc(sizeof(char) * 125);
+            char *buffer = (char *)malloc(sizeof(char) * 200);
             if (buffer == NULL)
             {
                 printf("Could not allocate memory \n");
@@ -91,7 +91,10 @@ TEST_CASE("Adjency matrix test for 4x(1-x)")
                 sprintf(buffer, "%s {%lf}", buffer, micro_clusters_arr[micro_index].center[j]);
             }
             sprintf(buffer, "%s (%lf)", buffer, empirical_m(micro_clusters_arr[micro_index].number_of_data_samples) * sqrt(micro_clusters_arr[micro_index].variance));
-            sprintf(buffer, "%s |%lf|\n", buffer, sqrt(micro_clusters_arr[micro_index].variance));
+            sprintf(buffer, "%s |%lf|", buffer, sqrt(micro_clusters_arr[micro_index].variance));
+            sprintf(buffer, "%s ^%lf^", buffer, micro_clusters_arr[micro_index].eccentricity);
+            sprintf(buffer, "%s ~%lf~", buffer, macro_clusters_arr[i].micro_eccentricity_mean);
+            sprintf(buffer, "%s ?%u?\n", buffer, macro_clusters_arr[i].n_micro_clusters);
             int file_i = 0;
             while (file_i < strlen(buffer))
             {
