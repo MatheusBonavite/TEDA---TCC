@@ -34,5 +34,5 @@ struct Macro_Clusters
 {
     unsigned int *group_of_micro_clusters;
     unsigned int n_micro_clusters;
-    double micro_eccentricity_mean;
+    double micro_density_mean;
 };

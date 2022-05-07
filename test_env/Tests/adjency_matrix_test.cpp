@@ -93,7 +93,7 @@ TEST_CASE("Adjency matrix test for 4x(1-x)")
             sprintf(buffer, "%s (%lf)", buffer, empirical_m(micro_clusters_arr[micro_index].number_of_data_samples) * sqrt(micro_clusters_arr[micro_index].variance));
             sprintf(buffer, "%s |%lf|", buffer, sqrt(micro_clusters_arr[micro_index].variance));
             sprintf(buffer, "%s ^%lf^", buffer, micro_clusters_arr[micro_index].eccentricity);
-            sprintf(buffer, "%s ~%lf~", buffer, macro_clusters_arr[i].micro_eccentricity_mean);
+            sprintf(buffer, "%s ~%lf~", buffer, macro_clusters_arr[i].micro_density_mean);
             sprintf(buffer, "%s ?%u?\n", buffer, macro_clusters_arr[i].n_micro_clusters);
             int file_i = 0;
             while (file_i < strlen(buffer))
