@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import re
 
-filename = "adjency_test.txt"
+filename = "adjency_test_after.txt"
 filehandle = open(filename, 'r')
 x_vec = []
 rad_vec = []
@@ -49,10 +49,10 @@ ax.grid()
 
 x0 = 0.33
 x1 = 0.315
-for i in range(30000):
+for i in range(100000):
     centers = []
     if i >= 0 and i < 15000:
-        centers = [3.0, 2.0]
+        centers = [1.58, 2.0]
     if i >= 15000:
         centers = [0.5, 2.0]
         
@@ -70,5 +70,5 @@ for i in range(len(x_vec)):
         circles = plt.Circle((x_vec[i][0], x_vec[i][1]), rad_vec[i], color=color_scheme[i], fill=False)
     ax.add_patch(circles)
 
-fig.savefig('plot_micro_clusters_2.png')
+fig.savefig('plot_micro_clusters_3.png')
 filehandle.close()
