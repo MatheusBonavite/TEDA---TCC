@@ -1,3 +1,4 @@
+#include <math.h>
 double euclidean_distance(double *matrix, unsigned int i, unsigned int j, unsigned int columns)
 {
     double result = 0.0;
