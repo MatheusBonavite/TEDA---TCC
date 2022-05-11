@@ -101,13 +101,15 @@ TEST_CASE("Three dimensional euclidean distance")
 
     REQUIRE(T.check_two_numbers(euclidean_distance(T.to_test, 0, 1, THREE_DIMENSION_COLS), 10.892199) == true);
 
-    REQUIRE(T.check_two_numbers(euclidean_distance(T.to_test, 1, 2, THREE_DIMENSION_COLS), 5.015974) == true);
-
-    REQUIRE(T.check_two_numbers(euclidean_distance(T.to_test, 2, 3, THREE_DIMENSION_COLS), 11.857487) == true);
+    REQUIRE(T.check_two_numbers(euclidean_distance(T.to_test, 0, 2, THREE_DIMENSION_COLS), 9.267146) == true);
 
     REQUIRE(T.check_two_numbers(euclidean_distance(T.to_test, 0, 3, THREE_DIMENSION_COLS), 20.163333) == true);
 
-    REQUIRE(T.check_two_numbers(euclidean_distance(T.to_test, 0, 2, THREE_DIMENSION_COLS), 9.267146) == true);
+    REQUIRE(T.check_two_numbers(euclidean_distance(T.to_test, 1, 2, THREE_DIMENSION_COLS), 5.015974) == true);
+
+    REQUIRE(T.check_two_numbers(euclidean_distance(T.to_test, 1, 3, THREE_DIMENSION_COLS), 13.731715) == true);
+
+    REQUIRE(T.check_two_numbers(euclidean_distance(T.to_test, 2, 3, THREE_DIMENSION_COLS), 11.857487) == true);
 }
 
 TEST_CASE("Four dimensional euclidean distance")
@@ -117,7 +119,7 @@ TEST_CASE("Four dimensional euclidean distance")
 
     REQUIRE(T.check_two_numbers(euclidean_distance(T.to_test, 0, 1, FOUR_DIMENSION_COLS), 14.444376) == true);
 
-    REQUIRE(T.check_two_numbers(euclidean_distance(T.to_test, 1, 2, FOUR_DIMENSION_COLS), 10.592450) == true);
-
     REQUIRE(T.check_two_numbers(euclidean_distance(T.to_test, 0, 2, FOUR_DIMENSION_COLS), 16.710476) == true);
+
+    REQUIRE(T.check_two_numbers(euclidean_distance(T.to_test, 1, 2, FOUR_DIMENSION_COLS), 10.592450) == true);
 }

@@ -93,6 +93,26 @@ TEST_CASE("Two dimensional cumulative proximity")
     REQUIRE(T.check_two_numbers(cumulative_proximity(T.to_test, 2, TWO_DIMENSION_ROWS, TWO_DIMENSION_COLS), 42.340202) == true);
 
     REQUIRE(T.check_two_numbers(cumulative_proximity(T.to_test, 3, TWO_DIMENSION_ROWS, TWO_DIMENSION_COLS), 47.6972058) == true);
+
+    REQUIRE(T.check_two_numbers(cumulative_proximity(T.to_test, 4, TWO_DIMENSION_ROWS, TWO_DIMENSION_COLS), 47.7556278) == true);
+
+    REQUIRE(T.check_two_numbers(cumulative_proximity(T.to_test, 5, TWO_DIMENSION_ROWS, TWO_DIMENSION_COLS), 54.493498) == true);
+
+    REQUIRE(T.check_two_numbers(cumulative_proximity(T.to_test, 6, TWO_DIMENSION_ROWS, TWO_DIMENSION_COLS), 48.466089) == true);
+}
+
+TEST_CASE("Three dimensional cumulative proximity")
+{
+    TestClass T;
+    T.to_test = test_3d;
+
+    REQUIRE(T.check_two_numbers(cumulative_proximity(T.to_test, 0, THREE_DIMENSION_ROWS, THREE_DIMENSION_COLS), 40.322678) == true);
+
+    REQUIRE(T.check_two_numbers(cumulative_proximity(T.to_test, 1, THREE_DIMENSION_ROWS, THREE_DIMENSION_COLS), 29.639888) == true);
+
+    REQUIRE(T.check_two_numbers(cumulative_proximity(T.to_test, 2, THREE_DIMENSION_ROWS, THREE_DIMENSION_COLS), 26.140607) == true);
+
+    REQUIRE(T.check_two_numbers(cumulative_proximity(T.to_test, 3, THREE_DIMENSION_ROWS, THREE_DIMENSION_COLS), 45.752535) == true);
 }
 
 TEST_CASE("Four dimensional cumulative proximity")
