@@ -79,6 +79,20 @@ TEST_CASE("One dimensional cumulative proximity")
     REQUIRE(T.check_two_numbers(cumulative_proximity(T.to_test, 5, ONE_DIMENSION_ROWS, ONE_DIMENSION_COLS), 62.0) == true);
 
     REQUIRE(T.check_two_numbers(cumulative_proximity(T.to_test, 6, ONE_DIMENSION_ROWS, ONE_DIMENSION_COLS), 89.2) == true);
+
+    REQUIRE(T.check_two_numbers(cumulative_proximity(T.to_test, 7, ONE_DIMENSION_ROWS, ONE_DIMENSION_COLS), 51.6) == true);
+
+    REQUIRE(T.check_two_numbers(cumulative_proximity(T.to_test, 8, ONE_DIMENSION_ROWS, ONE_DIMENSION_COLS), 53.6) == true);
+
+    REQUIRE(T.check_two_numbers(cumulative_proximity(T.to_test, 9, ONE_DIMENSION_ROWS, ONE_DIMENSION_COLS), 83.6) == true);
+
+    REQUIRE(T.check_two_numbers(cumulative_proximity(T.to_test, 10, ONE_DIMENSION_ROWS, ONE_DIMENSION_COLS), 74.0) == true);
+
+    REQUIRE(T.check_two_numbers(cumulative_proximity(T.to_test, 11, ONE_DIMENSION_ROWS, ONE_DIMENSION_COLS), 51.6) == true);
+
+    REQUIRE(T.check_two_numbers(cumulative_proximity(T.to_test, 12, ONE_DIMENSION_ROWS, ONE_DIMENSION_COLS), 60.4) == true);
+
+    REQUIRE(T.check_two_numbers(cumulative_proximity(T.to_test, 13, ONE_DIMENSION_ROWS, ONE_DIMENSION_COLS), 53.6) == true);
 }
 
 TEST_CASE("Two dimensional cumulative proximity")
