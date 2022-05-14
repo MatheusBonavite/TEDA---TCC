@@ -103,12 +103,11 @@ struct Micro_Cluster
     double density;
     double outlier_threshold_parameter;
 };
-unsigned int *adjency_matrix(struct Micro_Cluster *micro_clusters_arr, unsigned int number_of_micro_clusters, unsigned int columns)
+
+void adjency_matrix(struct Micro_Cluster *micro_clusters_arr, unsigned int *adj_nodes, unsigned int number_of_micro_clusters, unsigned int columns)
 {
     double dist_centers = 0.0;
     double variance_sum = 0.0;
-    unsigned int *adj_nodes = (unsigned int *)malloc((number_of_micro_clusters * number_of_micro_clusters) * sizeof(unsigned int));
-    int_zero_matrix_initializer(adj_nodes, number_of_micro_clusters, number_of_micro_clusters);
     for (unsigned int i = 0; i < number_of_micro_clusters; i++)
     {
         for (unsigned int j = 0; j < number_of_micro_clusters; j++)
@@ -145,7 +144,7 @@ unsigned int *adjency_matrix(struct Micro_Cluster *micro_clusters_arr, unsigned 
             }
         }
     }
-    return adj_nodes;
+    return;
 }
 struct Micro_Cluster *allocate_initial_micro_cluster(unsigned int *number_of_micro_clusters, double *sample_current, unsigned int columns)
 {

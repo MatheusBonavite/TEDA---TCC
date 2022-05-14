@@ -15,7 +15,7 @@ struct Micro_Cluster
 double two_vec_euclidean_distance(double *a, double *b, unsigned int columns);
 void int_zero_matrix_initializer(unsigned int *matrix, unsigned int rows, unsigned int columns);
 double empirical_m(int k);
-unsigned int *adjency_matrix(struct Micro_Cluster *micro_clusters_arr, unsigned int number_of_micro_clusters, unsigned int columns);
+void adjency_matrix(struct Micro_Cluster *micro_clusters_arr, unsigned int *adj_nodes, unsigned int number_of_micro_clusters, unsigned int columns);
 double vec_dot_product(double *vector_a, double *vector_b, unsigned int columns);
 struct Micro_Cluster *allocate_initial_micro_cluster(unsigned int *number_of_micro_clusters, double *sample_current, unsigned int columns);
 void recursive_biased_sigma(double *sigma_current, double *mi_current, double *sample_current, unsigned int matrix_index, unsigned int columns);

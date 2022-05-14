@@ -79,14 +79,16 @@ TEST_CASE("Two dimensional micro cluster grouping test")
     struct Micro_Cluster *micro_clusters_arr;
     for (unsigned int i = 0; i < TWO_DIMENSION_ROWS; i++)
         micro_clusters_arr = update_micro_cluster(micro_clusters_arr, number_of_micro_clusters, test_2d[i], i, TWO_DIMENSION_COLS);
-    unsigned int *adj_node = adjency_matrix(micro_clusters_arr, *number_of_micro_clusters, TWO_DIMENSION_COLS);
-    for (unsigned int i = 0; i < *number_of_micro_clusters; i++)
+    unsigned int *adj_nodes = (unsigned int *)calloc((n * n), sizeof(unsigned int));
+    adjency_matrix(micro_clusters_arr, adj_nodes, n, TWO_DIMENSION_COLS);
+    for (unsigned int i = 0; i < n; i++)
     {
-        for (unsigned int j = 0; j < *number_of_micro_clusters; j++)
+        for (unsigned int j = 0; j < n; j++)
         {
-            printf("adj_node[%u][%u]: %u\n", i, j, adj_node[(i * TWO_DIMENSION_COLS) + j]);
+            printf("__adj_node[%u][%u]__: %u\n", i, j, adj_nodes[(i * n) + j]);
         }
     }
     REQUIRE(true == true);
     free(micro_clusters_arr);
+    free(adj_nodes);
 }
