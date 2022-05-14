@@ -106,7 +106,7 @@ void print_micro_info(struct Micro_Cluster micro_cluster, unsigned int columns)
 {
     printf("Micro cluster variance: %lf \n", micro_cluster.variance);
     printf("Micro cluster eccentricity: %lf \n", micro_cluster.eccentricity);
-    printf("Micro cluster n of data samples: %lf \n", micro_cluster.number_of_data_samples);
+    printf("Micro cluster n of data samples: %u \n", micro_cluster.number_of_data_samples);
     for (unsigned int j = 0; j < columns; j++)
     {
         printf("center[%u] : %lf \t", j, micro_cluster.center[j]);
