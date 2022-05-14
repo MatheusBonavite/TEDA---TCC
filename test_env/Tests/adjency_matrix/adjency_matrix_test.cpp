@@ -2,7 +2,7 @@
 #include "../test_lib/catch.hh"
 #include <math.h>
 #include <stdlib.h>
-#include "./micro_cluster_test_header.h"
+#include "./adjency_matrix_test_header.h"
 
 #define TWO_DIMENSION_ROWS 10
 #define TWO_DIMENSION_COLS 2
@@ -71,18 +71,22 @@ void TestClass::write_micro_on_file(Micro_Cluster *micro_clusters_arr, unsigned 
     }
 }
 
-TEST_CASE("Two dimensional micro cluster test")
+TEST_CASE("Two dimensional micro cluster grouping test")
 {
     unsigned int n = 0;
     unsigned int *number_of_micro_clusters = &n;
     TestClass T;
     struct Micro_Cluster *micro_clusters_arr;
     for (unsigned int i = 0; i < TWO_DIMENSION_ROWS; i++)
-    {
-        printf("New function call \n\n\n\n");
         micro_clusters_arr = update_micro_cluster(micro_clusters_arr, number_of_micro_clusters, test_2d[i], i, TWO_DIMENSION_COLS);
+    unsigned int *adj_node = adjency_matrix(micro_clusters_arr, *number_of_micro_clusters, TWO_DIMENSION_COLS);
+    for (unsigned int i = 0; i < *number_of_micro_clusters; i++)
+    {
+        for (unsigned int j = 0; j < *number_of_micro_clusters; j++)
+        {
+            printf("adj_node[%u][%u]: %u\n", i, j, adj_node[(i * TWO_DIMENSION_COLS) + j]);
+        }
     }
-    T.write_micro_on_file(micro_clusters_arr, *number_of_micro_clusters, TWO_DIMENSION_COLS);
     REQUIRE(true == true);
     free(micro_clusters_arr);
 }
