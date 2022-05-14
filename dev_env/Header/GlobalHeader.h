@@ -1,37 +1,54 @@
 #pragma once
 #include "../sqlite/sqlite3.h"
 
-struct micro_cluster
+struct Macro_Clusters
+{
+    unsigned int *group_of_micro_clusters;
+    unsigned int n_micro_clusters;
+    double micro_density_mean;
+};
+
+struct Micro_Cluster
 {
     unsigned int number_of_data_samples;
-    float center;
-    float variance;
-    float eccentricity;
-    float normalized_eccentricity;
-    float typicality;
-    float normalized_typicality;
-    float density;
-    float mki_ski_outlier;
+    double *center;
+    double variance;
+    double eccentricity;
+    double typicality;
+    double density;
+    double outlier_threshold_parameter;
 };
 
 /* DbFunctions Folder */
-sqlite3 *either_exists_or_create_table(char *, sqlite3 *);        // CreateTable.c
-unsigned int describe_features(sqlite3 *);                        // DescribeFeatures.c
-int get_amount_of_data(sqlite3 *);                                // GetAmountOfData.c
-void insert_entries_in_table(char *, sqlite3 *);                  // InsertTable.c
-void retrieve_feature_from_table(double **, int, int, sqlite3 *); // RetrieveFeature.c
-void retrieve_label_from_table(int *, int, sqlite3 *);            // RetrieveLabel.c
+sqlite3 *either_exists_or_create_table(char *, sqlite3 *);       // CreateTable.c
+unsigned int describe_features(sqlite3 *);                       // DescribeFeatures.c
+int get_amount_of_data(sqlite3 *);                               // GetAmountOfData.c
+void insert_entries_in_table(char *, sqlite3 *);                 // InsertTable.c
+void retrieve_feature_from_table(double *, int, int, sqlite3 *); // RetrieveFeature.c
+void retrieve_label_from_table(int *, int, sqlite3 *);           // RetrieveLabel.c
 /* DbFunctions Folder */
 
 /*MathFunctions Folder*/
-void zero_matrix_initializer(double **, int, int);                                                                   // ZeroMatrixInitializer.c
-void zero_array_initializer(int *, int);                                                                             // ZeroArrayInitializer.c
-double euclidean_distance(double **, unsigned int i, unsigned int j, unsigned int amount_of_columns);                // EuclideanDistance.c
-double cumulative_proximity(double **, unsigned int i, unsigned int amount_of, unsigned int amount_of_columns);      // CumulativeProximity.c
-double offline_eccentricity(double **, unsigned int amount_of_columns, unsigned int amount_of, unsigned int i);      // OnlineEccentricity.c
-double online_eccentricity(double **, double *, double *, double *, unsigned int amount_of_columns, unsigned int k); // OfflineEccentricity.c
-double m_function(unsigned int k);                                                                                   // MFunction.c
-double m_function_second_degree(unsigned int k);                                                                     // MFunctionSecondDegree.c
-double m_function_linear(unsigned int k);                                                                            // MFunctionLinear.c
-double outlier_condition(double, unsigned int k);                                                                    // OutlierCondition.c
-/*MathFunctions Folder*/
+struct Macro_Clusters *bfs_grouping(struct Macro_Clusters *macro_clusters_arr, struct Micro_Cluster *micro_clusters_arr, unsigned int *adjency_matrix, unsigned int *number_of_macro_clusters, unsigned int number_of_micro_clusters);
+void recursive_mean(double *mi_current, double *sample_current, unsigned int matrix_index, unsigned int columns);
+double two_vec_euclidean_distance(double *a, double *b, unsigned int columns);
+void adjency_matrix(struct Micro_Cluster *micro_clusters_arr, unsigned int *adj_nodes, unsigned int number_of_micro_clusters, unsigned int columns);
+double cumulative_proximity(double *matrix, unsigned int i, unsigned int rows, unsigned int columns);
+double eccentricity(double *matrix, unsigned int i, unsigned int amount_of_rows, unsigned int amount_of_columns);
+double euclidean_distance(double *matrix, unsigned int i, unsigned int j, unsigned int columns);
+void zero_matrix_initializer(double *matrix, unsigned int rows, unsigned int columns);
+void int_zero_matrix_initializer(unsigned int *matrix, unsigned int rows, unsigned int columns);
+double *matrix_allocation(unsigned int rows, unsigned int columns);
+unsigned int *int_matrix_allocation(unsigned int rows, unsigned int columns);
+double empirical_m(int k);
+void recursive_eccentricity(unsigned int matrix_index, double *sample_current, double *mi_current, double *sigma_current, double *eccentricity, unsigned int columns);
+struct Micro_Cluster *allocate_initial_micro_cluster(unsigned int *number_of_micro_clusters, double *sample_current, unsigned int columns);
+struct Micro_Cluster *update_micro_cluster(struct Micro_Cluster *micro_clusters_arr, unsigned int *number_of_micro_clusters, double *sample_current, unsigned int k, unsigned int columns);
+double vec_dot_product(double *vector_a, double *vector_b, unsigned int columns);
+void recursive_biased_sigma(double *sigma_current, double *mi_current, double *sample_current, unsigned int matrix_index, unsigned int columns);
+void recursive_unbiased_sigma(double *sigma_current, double *mi_current, double *sample_current, unsigned int matrix_index, unsigned int columns);
+void regroup_adjency_matrix(struct Macro_Clusters *macro_clusters_arr, struct Micro_Cluster *micro_clusters_arr, unsigned int *adjency_matrix, unsigned int n_macro_clusters, unsigned int n_micro_clusters);
+double squared_euclidean_distance(double *matrix, unsigned int i, unsigned int j, unsigned int columns);
+double squared_cumulative_proximity(double *matrix, unsigned int i, unsigned int rows, unsigned int columns);
+double squared_eccentricity(double *matrix, unsigned int i, unsigned int amount_of_rows, unsigned int amount_of_columns);
+double vec_dot_product(double *vector_a, double *vector_b, unsigned int columns);

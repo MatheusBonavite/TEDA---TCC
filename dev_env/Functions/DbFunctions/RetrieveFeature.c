@@ -8,7 +8,7 @@ typedef SSIZE_T ssize_t;
 #include <math.h>
 #include "../../sqlite/sqlite3.h"
 
-void retrieve_feature_from_table(double **matrix, int rows, int cols, sqlite3 *db)
+void retrieve_feature_from_table(double *matrix, int rows, int cols, sqlite3 *db)
 {
     sqlite3_stmt *stmt;
     sqlite3_prepare_v2(
@@ -23,7 +23,7 @@ void retrieve_feature_from_table(double **matrix, int rows, int cols, sqlite3 *d
     {
         for (int j = 0; j < cols; j++)
         {
-            matrix[i][j] = sqlite3_column_double(stmt, j + 1);
+            matrix[(i * cols) + j] = sqlite3_column_double(stmt, j + 1);
         }
         i++;
     }
