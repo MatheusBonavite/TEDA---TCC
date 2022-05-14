@@ -51,11 +51,74 @@ int main()
             test_2d[j] = x_features[(i * columns) + j];
         }
         micro_clusters_arr = update_micro_cluster(micro_clusters_arr, number_of_micro_clusters, test_2d, i, columns);
+        if (i > 0 && i % 100000 == 0)
+        {
+            unsigned int *adj_nodes = (unsigned int *)calloc((n_micro * n_micro), sizeof(unsigned int));
+            adjency_matrix(micro_clusters_arr, adj_nodes, n_micro, columns);
+            macro_clusters_arr = bfs_grouping(macro_clusters_arr, micro_clusters_arr, adj_nodes, number_of_macro_clusters, *number_of_micro_clusters);
+            regroup_adjency_matrix(macro_clusters_arr, micro_clusters_arr, adj_nodes, *number_of_macro_clusters, *number_of_micro_clusters);
+            for (unsigned int j = 0; j < *number_of_macro_clusters; j++)
+            {
+                free(macro_clusters_arr[j].group_of_micro_clusters);
+            }
+            free(macro_clusters_arr);
+            *number_of_macro_clusters = 0;
+            macro_clusters_arr = bfs_grouping(macro_clusters_arr, micro_clusters_arr, adj_nodes, number_of_macro_clusters, *number_of_micro_clusters);
+            FILE *file;
+            if (i == 100000)
+                file = fopen("./plots/answer1.txt", "w+");
+            if (i == 200000)
+                file = fopen("./plots/answer2.txt", "w+");
+            if (i == 300000)
+                file = fopen("./plots/answer3.txt", "w+");
+            for (unsigned int i = 0; i < *number_of_macro_clusters; i++)
+            {
+                for (unsigned int w = 0; w < macro_clusters_arr[i].n_micro_clusters; w++)
+                {
+                    char *buffer = (char *)malloc(sizeof(char) * 250);
+                    if (buffer == NULL)
+                    {
+                        printf("Could not allocate memory \n");
+                        exit(1);
+                    }
+                    sprintf(buffer, "[%u]:", i);
+                    unsigned int micro_index = macro_clusters_arr[i].group_of_micro_clusters[w];
+                    for (unsigned int j = 0; j < columns; j++)
+                    {
+                        sprintf(buffer, "%s {%lf}", buffer, micro_clusters_arr[micro_index].center[j]);
+                    }
+                    sprintf(buffer, "%s (%lf)", buffer, empirical_m(micro_clusters_arr[micro_index].number_of_data_samples) * sqrt(micro_clusters_arr[micro_index].variance));
+                    sprintf(buffer, "%s |%lf|", buffer, sqrt(micro_clusters_arr[micro_index].variance));
+                    sprintf(buffer, "%s ^%lf^", buffer, micro_clusters_arr[micro_index].eccentricity);
+                    sprintf(buffer, "%s /%lf/", buffer, 2.0 / micro_clusters_arr[micro_index].eccentricity);
+                    sprintf(buffer, "%s ~%lf~", buffer, macro_clusters_arr[i].micro_density_mean);
+                    sprintf(buffer, "%s >%u<", buffer, macro_clusters_arr[i].n_micro_clusters);
+                    sprintf(buffer, "%s ?%u?\n", buffer, micro_index);
+                    int file_i = 0;
+                    while (file_i < strlen(buffer))
+                    {
+                        int result = fputc(buffer[file_i], file);
+                        if (result == EOF)
+                        {
+                            printf("Failed to write character! \n");
+                            exit(1);
+                        }
+                        file_i++;
+                    }
+                    free(buffer);
+                }
+            }
+
+            for (unsigned int j = 0; j < *number_of_macro_clusters; j++)
+            {
+                free(macro_clusters_arr[j].group_of_micro_clusters);
+            }
+            free(macro_clusters_arr);
+            *number_of_macro_clusters = 0;
+            free(adj_nodes);
+        }
         free(test_2d);
     }
-    unsigned int *adj_nodes = (unsigned int *)calloc((n_micro * n_micro), sizeof(unsigned int));
-    adjency_matrix(micro_clusters_arr, adj_nodes, n_micro, columns);
-    macro_clusters_arr = bfs_grouping(macro_clusters_arr, micro_clusters_arr, adj_nodes, number_of_macro_clusters, *number_of_micro_clusters);
 
     // /*Regrouping - Beginning*/
     // regroup_adjency_matrix(macro_clusters_arr, micro_clusters_arr, adj_nodes, *number_of_macro_clusters, *number_of_micro_clusters);
@@ -68,45 +131,46 @@ int main()
     // *number_of_macro_clusters = 0;
     // macro_clusters_arr = bfs_grouping(macro_clusters_arr, micro_clusters_arr, adj_nodes, number_of_macro_clusters, *number_of_micro_clusters);
     // /*Regrouping - End*/
-    printf("Got here \n");
-    FILE *file = fopen("./plots/answer.txt", "w+");
-    for (unsigned int i = 0; i < *number_of_macro_clusters; i++)
-    {
-        for (unsigned int w = 0; w < macro_clusters_arr[i].n_micro_clusters; w++)
-        {
-            char *buffer = (char *)malloc(sizeof(char) * 250);
-            if (buffer == NULL)
-            {
-                printf("Could not allocate memory \n");
-                exit(1);
-            }
-            sprintf(buffer, "[%u]:", i);
-            unsigned int micro_index = macro_clusters_arr[i].group_of_micro_clusters[w];
-            for (unsigned int j = 0; j < columns; j++)
-            {
-                sprintf(buffer, "%s {%lf}", buffer, micro_clusters_arr[micro_index].center[j]);
-            }
-            sprintf(buffer, "%s (%lf)", buffer, empirical_m(micro_clusters_arr[micro_index].number_of_data_samples) * sqrt(micro_clusters_arr[micro_index].variance));
-            sprintf(buffer, "%s |%lf|", buffer, sqrt(micro_clusters_arr[micro_index].variance));
-            sprintf(buffer, "%s ^%lf^", buffer, micro_clusters_arr[micro_index].eccentricity);
-            sprintf(buffer, "%s /%lf/", buffer, 2.0 / micro_clusters_arr[micro_index].eccentricity);
-            sprintf(buffer, "%s ~%lf~", buffer, macro_clusters_arr[i].micro_density_mean);
-            sprintf(buffer, "%s >%u<", buffer, macro_clusters_arr[i].n_micro_clusters);
-            sprintf(buffer, "%s ?%u?\n", buffer, micro_index);
-            int file_i = 0;
-            while (file_i < strlen(buffer))
-            {
-                int result = fputc(buffer[file_i], file);
-                if (result == EOF)
-                {
-                    printf("Failed to write character! \n");
-                    exit(1);
-                }
-                file_i++;
-            }
-            free(buffer);
-        }
-    }
+
+    printf("Got here!!! \n");
+    // FILE *file = fopen("./plots/answer.txt", "w+");
+    // for (unsigned int i = 0; i < *number_of_macro_clusters; i++)
+    // {
+    //     for (unsigned int w = 0; w < macro_clusters_arr[i].n_micro_clusters; w++)
+    //     {
+    //         char *buffer = (char *)malloc(sizeof(char) * 250);
+    //         if (buffer == NULL)
+    //         {
+    //             printf("Could not allocate memory \n");
+    //             exit(1);
+    //         }
+    //         sprintf(buffer, "[%u]:", i);
+    //         unsigned int micro_index = macro_clusters_arr[i].group_of_micro_clusters[w];
+    //         for (unsigned int j = 0; j < columns; j++)
+    //         {
+    //             sprintf(buffer, "%s {%lf}", buffer, micro_clusters_arr[micro_index].center[j]);
+    //         }
+    //         sprintf(buffer, "%s (%lf)", buffer, empirical_m(micro_clusters_arr[micro_index].number_of_data_samples) * sqrt(micro_clusters_arr[micro_index].variance));
+    //         sprintf(buffer, "%s |%lf|", buffer, sqrt(micro_clusters_arr[micro_index].variance));
+    //         sprintf(buffer, "%s ^%lf^", buffer, micro_clusters_arr[micro_index].eccentricity);
+    //         sprintf(buffer, "%s /%lf/", buffer, 2.0 / micro_clusters_arr[micro_index].eccentricity);
+    //         sprintf(buffer, "%s ~%lf~", buffer, macro_clusters_arr[i].micro_density_mean);
+    //         sprintf(buffer, "%s >%u<", buffer, macro_clusters_arr[i].n_micro_clusters);
+    //         sprintf(buffer, "%s ?%u?\n", buffer, micro_index);
+    //         int file_i = 0;
+    //         while (file_i < strlen(buffer))
+    //         {
+    //             int result = fputc(buffer[file_i], file);
+    //             if (result == EOF)
+    //             {
+    //                 printf("Failed to write character! \n");
+    //                 exit(1);
+    //             }
+    //             file_i++;
+    //         }
+    //         free(buffer);
+    //     }
+    // }
 
     /*Preventing DB Leaks*/
     sqlite3_close(db);
@@ -117,13 +181,7 @@ int main()
     {
         free(micro_clusters_arr[j].center);
     }
-    for (unsigned int j = 0; j < *number_of_macro_clusters; j++)
-    {
-        free(macro_clusters_arr[j].group_of_micro_clusters);
-    }
-    free(macro_clusters_arr);
     free(micro_clusters_arr);
-    free(adj_nodes);
     free(x_features);
     /*********************/
     return 0;
