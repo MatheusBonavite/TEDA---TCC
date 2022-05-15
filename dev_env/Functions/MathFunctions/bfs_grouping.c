@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 struct Macro_Clusters
 {
@@ -18,6 +19,7 @@ struct Micro_Cluster
     double density;
     double outlier_threshold_parameter;
 };
+double empirical_m(int k);
 void recursive_mean(double *mi_current, double *sample_current, unsigned int matrix_index, unsigned int columns);
 struct Macro_Clusters *bfs_grouping(struct Macro_Clusters *macro_clusters_arr, struct Micro_Cluster *micro_clusters_arr, unsigned int *adjency_matrix, unsigned int *number_of_macro_clusters, unsigned int number_of_micro_clusters)
 {
@@ -85,7 +87,7 @@ struct Macro_Clusters *bfs_grouping(struct Macro_Clusters *macro_clusters_arr, s
             macro_clusters_arr[*number_of_macro_clusters].group_of_micro_clusters[wu] = micro_index;
             if (micro_clusters_arr[micro_index].eccentricity > 0.000001)
             {
-                double density = 2.0 / micro_clusters_arr[micro_index].eccentricity;
+                double density = empirical_m(micro_clusters_arr[micro_index].number_of_data_samples) * sqrt(micro_clusters_arr[micro_index].variance);
                 double *current_density = &density;
                 recursive_mean(current_density_mean, current_density, computing_density_mean, 1);
                 computing_density_mean++;
@@ -95,7 +97,7 @@ struct Macro_Clusters *bfs_grouping(struct Macro_Clusters *macro_clusters_arr, s
 
         if (micro_clusters_arr[start_point].eccentricity > 0.000001)
         {
-            double density = 2.0 / micro_clusters_arr[start_point].eccentricity;
+            double density = empirical_m(micro_clusters_arr[start_point].number_of_data_samples) * sqrt(micro_clusters_arr[start_point].variance);
             double *current_density = &density;
             recursive_mean(current_density_mean, current_density, computing_density_mean, 1);
         }

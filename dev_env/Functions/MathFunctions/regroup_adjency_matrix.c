@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <math.h>
 struct Macro_Clusters
 {
     unsigned int *group_of_micro_clusters;
@@ -18,6 +18,7 @@ struct Micro_Cluster
     double density;
     double outlier_threshold_parameter;
 };
+double empirical_m(int k);
 void regroup_adjency_matrix(struct Macro_Clusters *macro_clusters_arr, struct Micro_Cluster *micro_clusters_arr, unsigned int *adjency_matrix, unsigned int n_macro_clusters, unsigned int n_micro_clusters)
 {
     unsigned int cluster_to_exclude_index = 0;
@@ -31,8 +32,8 @@ void regroup_adjency_matrix(struct Macro_Clusters *macro_clusters_arr, struct Mi
     {
         for (unsigned int j = 0; j < macro_clusters_arr[i].n_micro_clusters; j++)
         {
-            double activation_criteria = (double)2.0 / micro_clusters_arr[macro_clusters_arr[i].group_of_micro_clusters[j]].eccentricity;
-            if (activation_criteria >= macro_clusters_arr[i].micro_density_mean)
+            double activation_criteria = empirical_m(micro_clusters_arr[macro_clusters_arr[i].group_of_micro_clusters[j]].number_of_data_samples) * sqrt(micro_clusters_arr[macro_clusters_arr[i].group_of_micro_clusters[j]].variance);
+            if (activation_criteria < macro_clusters_arr[i].micro_density_mean)
             {
             }
             else

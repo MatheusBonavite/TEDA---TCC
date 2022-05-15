@@ -29,8 +29,8 @@ def value_for_color(value):
     return 'darkgreen'
 
 fig, ax = plt.subplots()
-ax.set_xlim((-7, 2))
-ax.set_ylim((49, 59))
+ax.set_xlim((-1, 0))
+ax.set_ylim((50, 52))
 
 filename = "answer3.txt"
 filehandle = open(filename, 'r')
@@ -45,7 +45,7 @@ while True:
     rad = re.findall("(?<=\()[0-9.]*(?=\))", line)
     col = re.findall("(?<=\[)[0-9.]*(?=\])", line)
 
-    circles = plt.Circle((float(x[0]), float(x[1])), float(rad[0])/10, color=value_for_color(col[0]), fill=False)
+    circles = plt.Circle((float(x[0]), float(x[1])), float(rad[0]), color=value_for_color(col[0]), fill=False)
     ax.add_patch(circles)
 
 ax.grid()
@@ -60,5 +60,5 @@ ax.grid()
 #     second_coordinate = line.split(',')[1]
 #     ax.scatter((first_coordinate), (second_coordinate), color='y', s=(10./fig.dpi))
 
-fig.savefig('plot_micro_clusters_3.png')
+fig.savefig('plot_micro_clusters_4.png')
 filehandle.close()
