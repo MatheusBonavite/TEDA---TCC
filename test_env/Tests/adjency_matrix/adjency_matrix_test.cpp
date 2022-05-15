@@ -81,14 +81,19 @@ TEST_CASE("Two dimensional micro cluster grouping test")
         micro_clusters_arr = update_micro_cluster(micro_clusters_arr, number_of_micro_clusters, test_2d[i], i, TWO_DIMENSION_COLS);
     unsigned int *adj_nodes = (unsigned int *)calloc((n * n), sizeof(unsigned int));
     adjency_matrix(micro_clusters_arr, adj_nodes, n, TWO_DIMENSION_COLS);
+    unsigned int hits = 0;
     for (unsigned int i = 0; i < n; i++)
     {
         for (unsigned int j = 0; j < n; j++)
         {
             printf("__adj_node[%u][%u]__: %u\n", i, j, adj_nodes[(i * n) + j]);
+            if (adj_nodes[(i * n) + j] == 1)
+            {
+                hits++;
+            }
         }
     }
-    REQUIRE(true == true);
+    REQUIRE(T.check_two_numbers((double)hits, 2.0) == true);
     free(micro_clusters_arr);
     free(adj_nodes);
 }

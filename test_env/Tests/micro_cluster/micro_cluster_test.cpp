@@ -83,6 +83,6 @@ TEST_CASE("Two dimensional micro cluster test")
         micro_clusters_arr = update_micro_cluster(micro_clusters_arr, number_of_micro_clusters, test_2d[i], i, TWO_DIMENSION_COLS);
     }
     T.write_micro_on_file(micro_clusters_arr, *number_of_micro_clusters, TWO_DIMENSION_COLS);
-    REQUIRE(true == true);
+    REQUIRE(T.check_two_numbers((double)n, 6.0) == true);
     free(micro_clusters_arr);
 }
