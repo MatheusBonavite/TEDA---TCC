@@ -1,11 +1,15 @@
 import matplotlib.pyplot as plt
 import re
 
-filename = "adjency_test_after.txt"
+filename = "adjency_test_before.txt"
 filehandle = open(filename, 'r')
-x_vec = []
-rad_vec = []
-color_scheme = []
+filename2 = "samples.txt"
+filehandle2 = open(filename2, 'r')
+
+fig, ax = plt.subplots()
+ax.set_xlim((0, 3))
+ax.set_ylim((1, 3))
+ax.grid()
 
 def value_for_color(value):
     if value == '0':
@@ -28,34 +32,25 @@ def value_for_color(value):
 
 while True:
     line = filehandle.readline()
-    if not line:
+    line2 = filehandle2.readline()
+
+    if not line and not line2:
         break
-    x = re.findall("(?<=\{)[0-9.]*(?=\})", line)
-    rad = re.findall("(?<=\()[0-9.]*(?=\))", line)
-    col = re.findall("(?<=\[)[0-9.]*(?=\])", line)
-    if x:
-        x_vec.append([float(value) for value in x])
-    if rad:
-        rad_vec.append(*[float(value) for value in rad])
-    if col:
-        color_scheme.append(*[value_for_color(value) for value in col])
 
-fig, ax = plt.subplots()
-ax.set_xlim((0, 4.5))
-ax.set_ylim((0, 4.5))
-ax.grid()
+    if line2:
+        first_coordinate = line2.split(" ")[0]
+        second_coordinate = line2.split(" ")[1]
+        ax.scatter((float(first_coordinate)), (float(second_coordinate)), color='k', s=(120./fig.dpi)**2, zorder=0)
+    
+    if line:
+        x = re.findall("(?<=\{)[0-9.]*(?=\})", line)
+        rad = re.findall("(?<=\()[0-9.]*(?=\))", line)
+        col = re.findall("(?<=\[)[0-9.]*(?=\])", line)
+        if x and rad and col:
+            circles = plt.Circle((float(x[0]), float(x[1])), float(rad[0]), color=value_for_color(col[0]), fill=False, zorder=1)
+            ax.add_patch(circles)
 
-while True:
-    line = filehandle.readline()
-    if not line:
-        break
-    first_coordinate = line.split(" ")[0]
-    second_coordinate = line.split(" ")[1]
-    ax.scatter((first_coordinate), (second_coordinate), color='#000000', s=(250./fig.dpi)**2)
 
-for i in range(len(x_vec)):
-    circles = plt.Circle((x_vec[i][0], x_vec[i][1]), rad_vec[i], color=color_scheme[i], fill=False)
-    ax.add_patch(circles)
-
-fig.savefig('plot_micro_clusters_3.png')
+fig.savefig('plot_micro_clusters_before.png')
 filehandle.close()
+filehandle2.close()

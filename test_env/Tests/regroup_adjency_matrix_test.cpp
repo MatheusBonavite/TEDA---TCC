@@ -92,6 +92,50 @@ TEST_CASE("Regroup adjency matrix test for 4x(1-x)")
     printf("Amount of micro [BEFORE] ::: %u \n", *number_of_micro_clusters);
     printf("\n\n\n");
 
+    FILE *file_before = fopen("./plots/adjency_test_before.txt", "w+");
+    if (file_before == NULL)
+    {
+        printf("Could not fopen! \n");
+        exit(1);
+    }
+    for (unsigned int i = 0; i < *number_of_macro_clusters; i++)
+    {
+        for (unsigned int w = 0; w < macro_clusters_arr[i].n_micro_clusters; w++)
+        {
+            char *buffer = (char *)malloc(sizeof(char) * 250);
+            if (buffer == NULL)
+            {
+                printf("Could not allocate memory \n");
+                exit(1);
+            }
+            sprintf(buffer, "[%u]:", i);
+            unsigned int micro_index = macro_clusters_arr[i].group_of_micro_clusters[w];
+            for (unsigned int j = 0; j < columns; j++)
+            {
+                sprintf(buffer, "%s {%lf}", buffer, micro_clusters_arr[micro_index].center[j]);
+            }
+            sprintf(buffer, "%s (%lf)", buffer, empirical_m(micro_clusters_arr[micro_index].number_of_data_samples) * sqrt(micro_clusters_arr[micro_index].variance));
+            sprintf(buffer, "%s |%lf|", buffer, sqrt(micro_clusters_arr[micro_index].variance));
+            sprintf(buffer, "%s ^%lf^", buffer, micro_clusters_arr[micro_index].eccentricity);
+            sprintf(buffer, "%s /%lf/", buffer, 2.0 / micro_clusters_arr[micro_index].eccentricity);
+            sprintf(buffer, "%s ~%lf~", buffer, macro_clusters_arr[i].micro_density_mean);
+            sprintf(buffer, "%s >%u<", buffer, macro_clusters_arr[i].n_micro_clusters);
+            sprintf(buffer, "%s ?%u?\n", buffer, micro_index);
+            int file_i = 0;
+            while (file_i < strlen(buffer))
+            {
+                int result = fputc(buffer[file_i], file_before);
+                if (result == EOF)
+                {
+                    printf("Failed to write character! \n");
+                    exit(1);
+                }
+                file_i++;
+            }
+            free(buffer);
+        }
+    }
+
     regroup_adjency_matrix(macro_clusters_arr, micro_clusters_arr, adj_node, *number_of_macro_clusters, *number_of_micro_clusters);
     for (unsigned int j = 0; j < *number_of_macro_clusters; j++)
     {
