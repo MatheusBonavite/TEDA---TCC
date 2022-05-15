@@ -8,31 +8,35 @@
 
 TEST_CASE("Regroup adjency matrix test for 4x(1-x)")
 {
-    struct Macro_Clusters *macro_clusters_arr;
-    unsigned int macr = 0;
-    unsigned int *number_of_macro_clusters = &macr;
-    FILE *file = fopen("./plots/adjency_test_after.txt", "w+");
-    if (file == NULL)
+    /* Create random engine with the help of seed */
+    std::default_random_engine e(0.5);
+
+    /* declaring normal distribution object 'distN' and initializing its mean and standard deviation fields. */
+    /* Mean and standard deviation are distribution parameters of Normal distribution. Here, we have used mean=5, and standard deviation=2. You can take mean and standard deviation as per your choice */
+    std::normal_distribution<double> distN(0, 0.25);
+    FILE *file_samples = fopen("./plots/samples.txt", "w+");
+    if (file_samples == NULL)
     {
         printf("Could not fopen! \n");
         exit(1);
     }
+    struct Macro_Clusters *macro_clusters_arr;
+    unsigned int macr = 0;
+    unsigned int *number_of_macro_clusters = &macr;
     unsigned int problem_dimension = 2;
-    unsigned int rows = 300000;
+    unsigned int rows = 4000;
     unsigned int columns = 2;
     unsigned int n = 0;
     double *matrix = matrix_allocation(rows, columns);
     struct Micro_Cluster *micro_clusters_arr;
     unsigned int *number_of_micro_clusters = &n;
 
-    double x0 = 0.33;
-    double x1 = 0.315;
-    double centers[2][2] = {{1.58, 2.0}, {0.5, 2.0}};
+    double centers[2][2] = {{1.0, 2.0}, {2.0, 2.0}};
     unsigned int center_index = 0;
     for (unsigned int i = 0; i < rows; i++)
     {
         double *test_2d = (double *)calloc(1, columns * sizeof(double));
-        if (i >= 15000)
+        if (i >= 2000)
         {
             center_index = 1;
         }
@@ -42,11 +46,24 @@ TEST_CASE("Regroup adjency matrix test for 4x(1-x)")
             printf("Could not allocate memory \n");
             exit(1);
         }
-        x0 = 4.0 * (x0) * (1.0 - x0);
-        x1 = 4.0 * (x1) * (1.0 - x1);
-        test_2d[0] = centers[center_index][0] + x0;
-        test_2d[1] = centers[center_index][1] + x1;
+        test_2d[0] = centers[center_index][0] + distN(e);
+        test_2d[1] = centers[center_index][1] + distN(e);
         micro_clusters_arr = update_micro_cluster(micro_clusters_arr, number_of_micro_clusters, test_2d, i, columns);
+
+        int file_i = 0;
+        char *buffer = (char *)malloc(sizeof(char) * 50);
+        sprintf(buffer, "%lf %lf \n", test_2d[0], test_2d[1]);
+        while (file_i < strlen(buffer))
+        {
+            int result = fputc(buffer[file_i], file_samples);
+            if (result == EOF)
+            {
+                printf("Failed to write character! \n");
+                exit(1);
+            }
+            file_i++;
+        }
+        free(buffer);
         free(test_2d);
     }
 
@@ -100,6 +117,7 @@ TEST_CASE("Regroup adjency matrix test for 4x(1-x)")
             }
         }
     }
+
     printf("Amount of hits [AFTER] ::: %u \n", hits);
     printf("Amount of misses [AFTER] ::: %u \n", misses);
     printf("\n\n\n");
@@ -108,6 +126,12 @@ TEST_CASE("Regroup adjency matrix test for 4x(1-x)")
     printf("Amount of micro [AFTER] ::: %u \n", *number_of_micro_clusters);
     printf("\n\n\n");
 
+    FILE *file = fopen("./plots/adjency_test_after.txt", "w+");
+    if (file == NULL)
+    {
+        printf("Could not fopen! \n");
+        exit(1);
+    }
     for (unsigned int i = 0; i < *number_of_macro_clusters; i++)
     {
         for (unsigned int w = 0; w < macro_clusters_arr[i].n_micro_clusters; w++)

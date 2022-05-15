@@ -1,4 +1,4 @@
-g++ -std=c++11 -w ./Functions/*.c micro_cluster_test.cpp -o micro_cluster_test
-./micro_cluster_test --list-tests
-./micro_cluster_test
-rm -f micro_cluster_test
+g++ -std=c++11 -w ./Functions/*.c regroup_adjency_matrix_test.cpp -o regroup_adjency_matrix_test
+./regroup_adjency_matrix_test --list-tests
+./regroup_adjency_matrix_test
+rm -f regroup_adjency_matrix_test

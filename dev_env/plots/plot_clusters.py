@@ -45,7 +45,7 @@ while True:
     rad = re.findall("(?<=\()[0-9.]*(?=\))", line)
     col = re.findall("(?<=\[)[0-9.]*(?=\])", line)
 
-    circles = plt.Circle((float(x[0]), float(x[1])), float(rad[0])/10, color=value_for_color(col[0]), fill=False)
+    circles = plt.Circle((float(x[0]), float(x[1])), float(rad[0]), color=value_for_color(col[0]), fill=False)
     ax.add_patch(circles)
 
 ax.grid()

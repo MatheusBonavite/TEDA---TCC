@@ -43,6 +43,19 @@ int main()
     double *x_features = (double *)calloc(rows * columns, sizeof(double));
     retrieve_feature_from_table(x_features, rows, columns, db);
 
+    /*Scale down data*/
+    for (unsigned int i = 0; i < rows; i++)
+    {
+        for (unsigned int j = 0; j < columns; j++)
+        {
+            if (j == 0)
+            {
+                x_features[(i * columns) + j] = (x_features[(i * columns) + j] / 1.7);
+            }
+        }
+    }
+    /*End of scaling down*/
+
     for (unsigned int i = 0; i < rows; i++)
     {
         double *test_2d = (double *)calloc(1, columns * sizeof(double));
