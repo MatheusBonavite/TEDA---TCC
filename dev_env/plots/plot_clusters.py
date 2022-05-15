@@ -2,37 +2,17 @@ import matplotlib.pyplot as plt
 import re
 
 def value_for_color(value):
-    if value == '0':
-        return 'b'
-    if value == '1':
-        return 'g'
-    if value == '2':
-        return 'r'
-    if value == '3':
-        return 'c'
-    if value == '4':
-        return 'm'
-    if value == '5':
-        return 'y'
-    if value == '6':
-        return 'k'
-    if value == '7':
-        return 'pink'
-    if value == '8':
-        return 'darkcyan'
-    if value == '9':
-        return '#451f55'
-    if value == '10':
-        return '#22162b'
-    if value == '11':
-        return '#724e91'
-    return 'darkgreen'
+    if(int(value) >= 100):
+        return f"#451{value}"
+    if(int(value) >= 10):
+        return f"#4510{value}"
+    return f"#45100{value}"
 
 fig, ax = plt.subplots()
-ax.set_xlim((-1, 0))
-ax.set_ylim((50, 52))
+ax.set_xlim((-7, 2))
+ax.set_ylim((49, 59))
 
-filename = "answer3.txt"
+filename = "answer4.txt"
 filehandle = open(filename, 'r')
 x_vec = []
 rad_vec = []

@@ -43,6 +43,19 @@ int main()
     double *x_features = (double *)calloc(rows * columns, sizeof(double));
     retrieve_feature_from_table(x_features, rows, columns, db);
 
+    /*Scale down data*/
+    for (unsigned int i = 0; i < rows; i++)
+    {
+        for (unsigned int j = 0; j < columns; j++)
+        {
+            if (j == 0)
+            {
+                x_features[(i * columns) + j] = (x_features[(i * columns) + j] / 1.7);
+            }
+        }
+    }
+    /*End of scaling down*/
+
     for (unsigned int i = 0; i < rows; i++)
     {
         double *test_2d = (double *)calloc(1, columns * sizeof(double));
@@ -51,7 +64,7 @@ int main()
             test_2d[j] = x_features[(i * columns) + j];
         }
         micro_clusters_arr = update_micro_cluster(micro_clusters_arr, number_of_micro_clusters, test_2d, i, columns);
-        if (i > 0 && i % 100000 == 0)
+        if ((i > 0 && i % 100000 == 0) || (i == rows - 1))
         {
             unsigned int *adj_nodes = (unsigned int *)calloc((n_micro * n_micro), sizeof(unsigned int));
             adjency_matrix(micro_clusters_arr, adj_nodes, n_micro, columns);
@@ -71,6 +84,8 @@ int main()
                 file = fopen("./plots/answer2.txt", "w+");
             if (i == 300000)
                 file = fopen("./plots/answer3.txt", "w+");
+            if (i == rows - 1)
+                file = fopen("./plots/answer4.txt", "w+");
             for (unsigned int i = 0; i < *number_of_macro_clusters; i++)
             {
                 for (unsigned int w = 0; w < macro_clusters_arr[i].n_micro_clusters; w++)
