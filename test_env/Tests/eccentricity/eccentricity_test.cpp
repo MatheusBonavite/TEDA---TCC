@@ -39,6 +39,16 @@ double test_2d[TWO_DIMENSION_ROWS * TWO_DIMENSION_COLS] = {
     6.2, 0.2,
     1.0, 4.8,
     2.4, 3.8};
+
+double t_2_d[8 * TWO_DIMENSION_COLS] = {
+    2.832695188718597, 2.2822119035908854,
+    3.2344369547241314, 1.7085186356112405,
+    2.787910244322204, 1.8694800695192089,
+    2.880693610969332, 1.7015829986631164,
+    3.207289384162727, 1.540252813369687,
+    2.5741599229171443, 1.6991434551020204,
+    3.230019575002791, 2.5283433248784792,
+    0.25, 0.25};
 double test_3d[THREE_DIMENSION_ROWS * THREE_DIMENSION_COLS] = {
     20.2, 3.0, 6.4,
     11.6, 8.2, 2.2,
@@ -65,6 +75,11 @@ TEST_CASE("One dimensional offline eccentricity")
 {
     TestClass T;
     T.to_test = test_1d;
+
+    for (unsigned int i = 0; i < 8; i++)
+    {
+        printf("R[%u] ::: %lf \n", i + 1, eccentricity(t_2_d, i, 8, TWO_DIMENSION_COLS));
+    }
 
     REQUIRE(T.check_two_numbers(eccentricity(T.to_test, 0, ONE_DIMENSION_ROWS, ONE_DIMENSION_COLS), 0.37566947207345064) == true);
 
