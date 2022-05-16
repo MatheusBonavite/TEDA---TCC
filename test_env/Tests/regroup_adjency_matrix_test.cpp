@@ -66,8 +66,8 @@ TEST_CASE("Regroup adjency matrix test for 4x(1-x)")
         free(buffer);
         free(test_2d);
     }
-
-    unsigned int *adj_node = adjency_matrix(micro_clusters_arr, *number_of_micro_clusters, columns);
+    unsigned int *adj_node = (unsigned int *)calloc(((*number_of_micro_clusters) * (*number_of_micro_clusters)), sizeof(unsigned int));
+    adjency_matrix(micro_clusters_arr, adj_node, *number_of_micro_clusters, columns);
     unsigned int hits = 0;
     unsigned int misses = 0;
     for (unsigned int w = 0; w < *number_of_micro_clusters; w++)
