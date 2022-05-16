@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import re
 
-filename = "adjency_test_after.txt"
+filename = "adjency_test_before.txt"
 filehandle = open(filename, 'r')
 filename2 = "samples.txt"
 filehandle2 = open(filename2, 'r')
@@ -51,6 +51,6 @@ while True:
             ax.add_patch(circles)
 
 
-fig.savefig('plot_micro_clusters_after.png')
+fig.savefig('plot_micro_clusters_before.png')
 filehandle.close()
 filehandle2.close()

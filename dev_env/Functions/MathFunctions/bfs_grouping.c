@@ -101,9 +101,8 @@ struct Macro_Clusters *bfs_grouping(struct Macro_Clusters *macro_clusters_arr, s
             }
             macro_clusters_arr[*number_of_macro_clusters].micro_density_mean = *current_density_mean;
             *number_of_macro_clusters = *number_of_macro_clusters + 1;
-
-            free(queue);
         }
+        free(queue);
     }
     free(visited);
     return macro_clusters_arr;
