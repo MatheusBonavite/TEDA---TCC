@@ -18,25 +18,24 @@ void write_macro_report(char *file_name, struct Macro_Clusters *macro_clusters_a
     {
         for (unsigned int w = 0; w < macro_clusters_arr[i].n_micro_clusters; w++)
         {
-            char *buffer = (char *)malloc(sizeof(char) * 250);
+            char *buffer = (char *)calloc(550, sizeof(char));
             if (buffer == NULL)
             {
                 printf("Could not allocate memory \n");
                 exit(1);
             }
-            sprintf(buffer, "[%u]:", i);
+            sprintf(buffer, "[%u][%u]: Micro Center: ", i, macro_clusters_arr[i].n_micro_clusters);
             unsigned int micro_index = macro_clusters_arr[i].group_of_micro_clusters[w];
             for (unsigned int j = 0; j < columns; j++)
             {
-                sprintf(buffer, "%s {%lf}", buffer, micro_clusters_arr[micro_index].center[j]);
+                sprintf(buffer, "%s %lf", buffer, micro_clusters_arr[micro_index].center[j]);
             }
-            sprintf(buffer, "%s (%lf)", buffer, empirical_m(micro_clusters_arr[micro_index].number_of_data_samples) * sqrt(micro_clusters_arr[micro_index].variance));
-            sprintf(buffer, "%s |%lf|", buffer, sqrt(micro_clusters_arr[micro_index].variance));
-            sprintf(buffer, "%s ^%lf^", buffer, micro_clusters_arr[micro_index].eccentricity);
-            sprintf(buffer, "%s /%lf/", buffer, 2.0 / micro_clusters_arr[micro_index].eccentricity);
-            sprintf(buffer, "%s ~%lf~", buffer, macro_clusters_arr[i].micro_density_mean);
-            sprintf(buffer, "%s >%u<", buffer, macro_clusters_arr[i].n_micro_clusters);
-            sprintf(buffer, "%s ?%u?\n", buffer, micro_index);
+            sprintf(buffer, "%s Micro Radius: %lf", buffer, empirical_m(micro_clusters_arr[micro_index].number_of_data_samples) * sqrt(micro_clusters_arr[micro_index].variance));
+            sprintf(buffer, "%s Micro Variance: %lf", buffer, sqrt(micro_clusters_arr[micro_index].variance));
+            sprintf(buffer, "%s Micro Eccentricity: %lf", buffer, micro_clusters_arr[micro_index].eccentricity);
+            sprintf(buffer, "%s Micro Density: %lf", buffer, 2.0 / micro_clusters_arr[micro_index].eccentricity);
+            sprintf(buffer, "%s Micro Density Mean: %lf", buffer, macro_clusters_arr[i].micro_density_mean);
+            sprintf(buffer, "%s Micro Index: %u\n", buffer, micro_index);
             int file_i = 0;
             while (file_i < strlen(buffer))
             {
@@ -64,7 +63,7 @@ void write_samples(double *test_2d)
         return;
     }
     int file_i = 0;
-    char *buffer = (char *)malloc(sizeof(char) * 50);
+    char *buffer = (char *)calloc(50, sizeof(char));
     sprintf(buffer, "%lf %lf \n", test_2d[0], test_2d[1]);
     while (file_i < strlen(buffer))
     {
@@ -89,7 +88,7 @@ void write_adjency_matrix_report(unsigned int *adjency_matrix, unsigned n)
         return;
     }
     int file_i = 0;
-    char *buffer = (char *)malloc(sizeof(char) * (n * n * 50));
+    char *buffer = (char *)calloc((n * n * 50), sizeof(char));
 
     sprintf(buffer, "Amount of micro_clusters: %u \n", n);
     for (unsigned int i = 0; i < n; i++)
@@ -188,21 +187,11 @@ TEST_CASE("General test for gaussian distribution, centers: [1.0, 2.0], [2.0, 2.
         micro_clusters_arr = update_micro_cluster(micro_clusters_arr, number_of_micro_clusters, test_2d, i, columns);
         write_samples(test_2d);
         write_micro_report(micro_clusters_arr, *number_of_micro_clusters);
-        printf("Amount of micro_clusters: %u \n", *number_of_micro_clusters);
-        for (unsigned int w = 0; w < *number_of_micro_clusters; w++)
-        {
-            printf("[%u] Variance: %lf ", w, micro_clusters_arr[w].variance);
-            printf("Eccentricity: %lf ", micro_clusters_arr[w].eccentricity);
-            printf("Center: (%lf , %lf) ", micro_clusters_arr[w].center[0], micro_clusters_arr[w].center[1]);
-            printf("Threshold: %lf ", micro_clusters_arr[w].outlier_threshold_parameter);
-            printf("N_Samples: %u ", micro_clusters_arr[w].number_of_data_samples);
-            printf("\n");
-        }
         free(test_2d);
 
         unsigned int *adj_node = (unsigned int *)calloc(((*number_of_micro_clusters) * (*number_of_micro_clusters)), sizeof(unsigned int));
         adjency_matrix(micro_clusters_arr, adj_node, *number_of_micro_clusters, columns);
-        // write_adjency_matrix_report(adj_node, *number_of_micro_clusters);
+        write_adjency_matrix_report(adj_node, *number_of_micro_clusters);
         macro_clusters_arr = bfs_grouping(macro_clusters_arr, micro_clusters_arr, adj_node, number_of_macro_clusters, *number_of_micro_clusters);
 
         char *file_before = "./plots/adjency_test_before.txt";

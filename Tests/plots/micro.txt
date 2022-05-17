@@ -168,7 +168,7 @@ Amount of micro_clusters: 14
  [10] Variance: 0.000000  Eccentricity: 0.000000  Center: (1.758714 , 1.881429)  Threshold: 0.000000  N_Samples: 1  
  [11] Variance: 0.000000  Eccentricity: 0.000000  Center: (1.863357 , 1.990377)  Threshold: 0.000000  N_Samples: 1  
  [12] Variance: 0.000000  Eccentricity: 0.000000  Center: (2.048737 , 1.878714)  Threshold: 0.000000  N_Samples: 1  
- [13] Variance: 0.000000  Eccentricity: 0.000000  Center: (1.907432 , 1.718981)  Threshold: -0.000000  N_Samples: 1  
+ [13] Variance: 0.000000  Eccentricity: 0.000000  Center: (1.907432 , 1.718981)  Threshold: 0.000000  N_Samples: 1  
  
 
 
@@ -186,7 +186,7 @@ Amount of micro_clusters: 15
  [10] Variance: 0.000000  Eccentricity: 0.000000  Center: (1.758714 , 1.881429)  Threshold: 0.000000  N_Samples: 1  
  [11] Variance: 0.000000  Eccentricity: 0.000000  Center: (1.863357 , 1.990377)  Threshold: 0.000000  N_Samples: 1  
  [12] Variance: 0.000000  Eccentricity: 0.000000  Center: (2.048737 , 1.878714)  Threshold: 0.000000  N_Samples: 1  
- [13] Variance: 0.000000  Eccentricity: 0.000000  Center: (1.907432 , 1.718981)  Threshold: -0.000000  N_Samples: 1  
+ [13] Variance: 0.000000  Eccentricity: 0.000000  Center: (1.907432 , 1.718981)  Threshold: 0.000000  N_Samples: 1  
  [14] Variance: 0.000000  Eccentricity: 0.000000  Center: (2.434159 , 2.220549)  Threshold: 0.000000  N_Samples: 1  
  
 
@@ -205,7 +205,7 @@ Amount of micro_clusters: 16
  [10] Variance: 0.000000  Eccentricity: 0.000000  Center: (1.758714 , 1.881429)  Threshold: 0.000000  N_Samples: 1  
  [11] Variance: 0.000000  Eccentricity: 0.000000  Center: (1.863357 , 1.990377)  Threshold: 0.000000  N_Samples: 1  
  [12] Variance: 0.000000  Eccentricity: 0.000000  Center: (2.048737 , 1.878714)  Threshold: 0.000000  N_Samples: 1  
- [13] Variance: 0.000000  Eccentricity: 0.000000  Center: (1.907432 , 1.718981)  Threshold: -0.000000  N_Samples: 1  
+ [13] Variance: 0.000000  Eccentricity: 0.000000  Center: (1.907432 , 1.718981)  Threshold: 0.000000  N_Samples: 1  
  [14] Variance: 0.000000  Eccentricity: 0.000000  Center: (2.434159 , 2.220549)  Threshold: 0.000000  N_Samples: 1  
  [15] Variance: 0.000000  Eccentricity: 0.000000  Center: (1.624303 , 2.142690)  Threshold: 0.000000  N_Samples: 1  
  
@@ -225,7 +225,7 @@ Amount of micro_clusters: 17
  [10] Variance: 0.000000  Eccentricity: 0.000000  Center: (1.758714 , 1.881429)  Threshold: 0.000000  N_Samples: 1  
  [11] Variance: 0.000000  Eccentricity: 0.000000  Center: (1.863357 , 1.990377)  Threshold: 0.000000  N_Samples: 1  
  [12] Variance: 0.000000  Eccentricity: 0.000000  Center: (2.048737 , 1.878714)  Threshold: 0.000000  N_Samples: 1  
- [13] Variance: 0.000000  Eccentricity: 0.000000  Center: (1.907432 , 1.718981)  Threshold: -0.000000  N_Samples: 1  
+ [13] Variance: 0.000000  Eccentricity: 0.000000  Center: (1.907432 , 1.718981)  Threshold: 0.000000  N_Samples: 1  
  [14] Variance: 0.000000  Eccentricity: 0.000000  Center: (2.434159 , 2.220549)  Threshold: 0.000000  N_Samples: 1  
  [15] Variance: 0.000000  Eccentricity: 0.000000  Center: (1.624303 , 2.142690)  Threshold: 0.000000  N_Samples: 1  
  [16] Variance: 0.000000  Eccentricity: 0.000000  Center: (1.767515 , 1.766253)  Threshold: 0.000000  N_Samples: 1  
@@ -246,7 +246,7 @@ Amount of micro_clusters: 18
  [10] Variance: 0.000000  Eccentricity: 0.000000  Center: (1.758714 , 1.881429)  Threshold: 0.000000  N_Samples: 1  
  [11] Variance: 0.000000  Eccentricity: 0.000000  Center: (1.863357 , 1.990377)  Threshold: 0.000000  N_Samples: 1  
  [12] Variance: 0.000000  Eccentricity: 0.000000  Center: (2.048737 , 1.878714)  Threshold: 0.000000  N_Samples: 1  
- [13] Variance: 0.000000  Eccentricity: 0.000000  Center: (1.907432 , 1.718981)  Threshold: -0.000000  N_Samples: 1  
+ [13] Variance: 0.000000  Eccentricity: 0.000000  Center: (1.907432 , 1.718981)  Threshold: 0.000000  N_Samples: 1  
  [14] Variance: 0.000000  Eccentricity: 0.000000  Center: (2.434159 , 2.220549)  Threshold: 0.000000  N_Samples: 1  
  [15] Variance: 0.000000  Eccentricity: 0.000000  Center: (1.624303 , 2.142690)  Threshold: 0.000000  N_Samples: 1  
  [16] Variance: 0.000000  Eccentricity: 0.000000  Center: (1.767515 , 1.766253)  Threshold: 0.000000  N_Samples: 1  
@@ -268,7 +268,7 @@ Amount of micro_clusters: 19
  [10] Variance: 0.000000  Eccentricity: 0.000000  Center: (1.758714 , 1.881429)  Threshold: 0.000000  N_Samples: 1  
  [11] Variance: 0.000000  Eccentricity: 0.000000  Center: (1.863357 , 1.990377)  Threshold: 0.000000  N_Samples: 1  
  [12] Variance: 0.000000  Eccentricity: 0.000000  Center: (2.048737 , 1.878714)  Threshold: 0.000000  N_Samples: 1  
- [13] Variance: 0.000000  Eccentricity: 0.000000  Center: (1.907432 , 1.718981)  Threshold: -0.000000  N_Samples: 1  
+ [13] Variance: 0.000000  Eccentricity: 0.000000  Center: (1.907432 , 1.718981)  Threshold: 0.000000  N_Samples: 1  
  [14] Variance: 0.000000  Eccentricity: 0.000000  Center: (2.434159 , 2.220549)  Threshold: 0.000000  N_Samples: 1  
  [15] Variance: 0.000000  Eccentricity: 0.000000  Center: (1.624303 , 2.142690)  Threshold: 0.000000  N_Samples: 1  
  [16] Variance: 0.000000  Eccentricity: 0.000000  Center: (1.767515 , 1.766253)  Threshold: 0.000000  N_Samples: 1  
