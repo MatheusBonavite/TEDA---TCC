@@ -38,7 +38,6 @@ void regroup_adjency_matrix(struct Macro_Clusters *macro_clusters_arr, struct Mi
             else
             {
                 clusters_to_exclude[cluster_to_exclude_index] = macro_clusters_arr[i].group_of_micro_clusters[j];
-                printf("to exclude ::: %u \n", clusters_to_exclude[cluster_to_exclude_index]);
                 cluster_to_exclude_index++;
                 unsigned int *new_clusters_to_exclude = (unsigned int *)realloc(clusters_to_exclude, (cluster_to_exclude_index + 1) * sizeof(unsigned int));
                 if (new_clusters_to_exclude == NULL)
