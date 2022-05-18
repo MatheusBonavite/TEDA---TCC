@@ -189,6 +189,7 @@ TEST_CASE("General test for gaussian distribution, centers: [1.0, 2.0], [2.0, 2.
         test_2d[0] = centers[center_index][0] + distN(e);
         test_2d[1] = centers[center_index][1] + distN(e);
         micro_clusters_arr = update_micro_cluster(micro_clusters_arr, number_of_micro_clusters, test_2d, i, columns);
+        write_samples(test_2d);
         free(test_2d);
 
         unsigned int *adj_node = (unsigned int *)calloc(((*number_of_micro_clusters) * (*number_of_micro_clusters)), sizeof(unsigned int));
@@ -199,6 +200,11 @@ TEST_CASE("General test for gaussian distribution, centers: [1.0, 2.0], [2.0, 2.
         }
         adjency_matrix(micro_clusters_arr, adj_node, *number_of_micro_clusters, columns);
         macro_clusters_arr = bfs_grouping(macro_clusters_arr, micro_clusters_arr, adj_node, inactivate_micros, number_of_macro_clusters, *number_of_micro_clusters, *how_much_to_exclude);
+        if (i == rows - 1)
+        {
+            char *file_macro_before = "./plots/file_macro_before.txt";
+            write_macro_report(file_macro_before, macro_clusters_arr, micro_clusters_arr, number_of_macro_clusters, columns);
+        }
 
         if (*how_much_to_exclude > 0)
             free(inactivate_micros);
@@ -218,6 +224,11 @@ TEST_CASE("General test for gaussian distribution, centers: [1.0, 2.0], [2.0, 2.
             *number_of_macro_clusters = 0;
         }
         macro_clusters_arr = bfs_grouping(macro_clusters_arr, micro_clusters_arr, adj_node, inactivate_micros, number_of_macro_clusters, *number_of_micro_clusters, *how_much_to_exclude);
+        if (i == rows - 1)
+        {
+            char *file_macro_before = "./plots/file_macro_after.txt";
+            write_macro_report(file_macro_before, macro_clusters_arr, micro_clusters_arr, number_of_macro_clusters, columns);
+        }
 
         if (*number_of_macro_clusters > 0)
         {
@@ -231,12 +242,14 @@ TEST_CASE("General test for gaussian distribution, centers: [1.0, 2.0], [2.0, 2.
         }
         free(adj_node);
     }
-
-    for (unsigned int j = 0; j < *number_of_micro_clusters; j++)
+    if (*number_of_micro_clusters > 0)
     {
-        free(micro_clusters_arr[j].center);
+        for (unsigned int j = 0; j < *number_of_micro_clusters; j++)
+        {
+            free(micro_clusters_arr[j].center);
+        }
+        free(micro_clusters_arr);
     }
-    free(micro_clusters_arr);
     if (*how_much_to_exclude > 0)
         free(inactivate_micros);
     REQUIRE(0 == 0);

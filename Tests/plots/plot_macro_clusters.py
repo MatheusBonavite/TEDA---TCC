@@ -18,7 +18,7 @@ fig, ax = plt.subplots()
 ax.set_xlim((0, 3))
 ax.set_ylim((1, 3))
 
-filename = "adjency_test_after.txt"
+filename = "file_macro_after.txt"
 filehandle = open(filename, 'r')
 x_vec = []
 rad_vec = []
