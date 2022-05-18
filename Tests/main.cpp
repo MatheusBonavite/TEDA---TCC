@@ -24,13 +24,13 @@ void write_macro_report(char *file_name, struct Macro_Clusters *macro_clusters_a
                 printf("Could not allocate memory \n");
                 exit(1);
             }
-            sprintf(buffer, "[%u][%u]: Micro Center: ", i, macro_clusters_arr[i].n_micro_clusters);
+            sprintf(buffer, "[%u]|%u|: Micro Center: ", i, macro_clusters_arr[i].n_micro_clusters);
             unsigned int micro_index = macro_clusters_arr[i].group_of_micro_clusters[w];
             for (unsigned int j = 0; j < columns; j++)
             {
-                sprintf(buffer, "%s %lf", buffer, micro_clusters_arr[micro_index].center[j]);
+                sprintf(buffer, "%s {%lf}", buffer, micro_clusters_arr[micro_index].center[j]);
             }
-            sprintf(buffer, "%s Micro Radius: %lf", buffer, empirical_m(micro_clusters_arr[micro_index].number_of_data_samples) * sqrt(micro_clusters_arr[micro_index].variance));
+            sprintf(buffer, "%s Micro Radius: (%lf)", buffer, empirical_m(micro_clusters_arr[micro_index].number_of_data_samples) * sqrt(micro_clusters_arr[micro_index].variance));
             sprintf(buffer, "%s Micro Variance: %lf", buffer, sqrt(micro_clusters_arr[micro_index].variance));
             sprintf(buffer, "%s Micro Eccentricity: %lf", buffer, micro_clusters_arr[micro_index].eccentricity);
             sprintf(buffer, "%s Micro Density: %lf", buffer, 2.0 / micro_clusters_arr[micro_index].eccentricity);
@@ -79,9 +79,9 @@ void write_samples(double *test_2d)
     fclose(file_samples);
 }
 
-void write_adjency_matrix_report(unsigned int *adjency_matrix, unsigned n)
+void write_adjency_matrix_report(char *file_name, unsigned int *adjency_matrix, unsigned n)
 {
-    FILE *adjency_matrix_file = fopen("./plots/adjency_matrix.txt", "a+");
+    FILE *adjency_matrix_file = fopen(file_name, "a+");
     if (adjency_matrix_file == NULL)
     {
         printf("Could not fopen \n");
@@ -160,7 +160,7 @@ TEST_CASE("General test for gaussian distribution, centers: [1.0, 2.0], [2.0, 2.
     unsigned int macr = 0;
     unsigned int *number_of_macro_clusters = &macr;
 
-    unsigned int rows = 20;
+    unsigned int rows = 4000;
     unsigned int columns = 2;
 
     struct Micro_Cluster *micro_clusters_arr;
@@ -170,6 +170,10 @@ TEST_CASE("General test for gaussian distribution, centers: [1.0, 2.0], [2.0, 2.
     double centers[2][2] = {{1.0, 2.0}, {2.0, 2.0}};
     unsigned int center_index = 0;
 
+    unsigned int how_much_exclude = 0;
+    unsigned int *how_much_to_exclude = &how_much_exclude;
+    unsigned int *inactivate_micros;
+
     for (unsigned int i = 0; i < rows; i++)
     {
         double *test_2d = (double *)calloc(1, columns * sizeof(double));
@@ -178,7 +182,7 @@ TEST_CASE("General test for gaussian distribution, centers: [1.0, 2.0], [2.0, 2.
             printf("Could not allocate memory \n");
             exit(1);
         }
-        if (i >= 10)
+        if (i >= 2000)
         {
             center_index = 1;
         }
@@ -186,17 +190,43 @@ TEST_CASE("General test for gaussian distribution, centers: [1.0, 2.0], [2.0, 2.
         test_2d[1] = centers[center_index][1] + distN(e);
         micro_clusters_arr = update_micro_cluster(micro_clusters_arr, number_of_micro_clusters, test_2d, i, columns);
         write_samples(test_2d);
-        write_micro_report(micro_clusters_arr, *number_of_micro_clusters);
         free(test_2d);
 
         unsigned int *adj_node = (unsigned int *)calloc(((*number_of_micro_clusters) * (*number_of_micro_clusters)), sizeof(unsigned int));
         adjency_matrix(micro_clusters_arr, adj_node, *number_of_micro_clusters, columns);
-        write_adjency_matrix_report(adj_node, *number_of_micro_clusters);
-        macro_clusters_arr = bfs_grouping(macro_clusters_arr, micro_clusters_arr, adj_node, number_of_macro_clusters, *number_of_micro_clusters);
+        macro_clusters_arr = bfs_grouping(macro_clusters_arr, micro_clusters_arr, adj_node, inactivate_micros, number_of_macro_clusters, *number_of_micro_clusters, *how_much_to_exclude);
 
-        char *file_before = "./plots/adjency_test_before.txt";
+        if (*how_much_to_exclude > 0)
+            free(inactivate_micros);
+        else
+            *how_much_to_exclude = 0;
+
+        char *macro_before = "./plots/adjency_test_before.txt";
+        char *adjency_matrix_before = "adj_matrix_before.txt";
         if (i == rows - 1)
-            write_macro_report(file_before, macro_clusters_arr, micro_clusters_arr, number_of_macro_clusters, columns);
+            write_macro_report(macro_before, macro_clusters_arr, micro_clusters_arr, number_of_macro_clusters, columns);
+        if (i == rows - 1)
+            write_adjency_matrix_report(adjency_matrix_before, adj_node, *number_of_micro_clusters);
+
+        inactivate_micros = regroup_adjency_matrix(macro_clusters_arr, micro_clusters_arr, adj_node, *number_of_macro_clusters, *number_of_micro_clusters, how_much_to_exclude);
+        if (*number_of_macro_clusters > 0)
+        {
+            for (unsigned int j = 0; j < *number_of_macro_clusters; j++)
+            {
+                free(macro_clusters_arr[j].group_of_micro_clusters);
+            }
+            free(macro_clusters_arr);
+            macro_clusters_arr = NULL;
+            *number_of_macro_clusters = 0;
+        }
+        macro_clusters_arr = bfs_grouping(macro_clusters_arr, micro_clusters_arr, adj_node, inactivate_micros, number_of_macro_clusters, *number_of_micro_clusters, *how_much_to_exclude);
+
+        char *macro_after = "./plots/adjency_test_after.txt";
+        char *adjency_matrix_after = "adj_matrix_after.txt";
+        if (i == rows - 1)
+            write_macro_report(macro_after, macro_clusters_arr, micro_clusters_arr, number_of_macro_clusters, columns);
+        if (i == rows - 1)
+            write_adjency_matrix_report(adjency_matrix_after, adj_node, *number_of_micro_clusters);
 
         if (*number_of_macro_clusters > 0)
         {
@@ -216,6 +246,7 @@ TEST_CASE("General test for gaussian distribution, centers: [1.0, 2.0], [2.0, 2.
         free(micro_clusters_arr[j].center);
     }
     free(micro_clusters_arr);
-
+    if (*how_much_to_exclude > 0)
+        free(inactivate_micros);
     REQUIRE(0 == 0);
 }

@@ -18,7 +18,8 @@ struct Micro_Cluster
     double density;
     double outlier_threshold_parameter;
 };
-void regroup_adjency_matrix(struct Macro_Clusters *macro_clusters_arr, struct Micro_Cluster *micro_clusters_arr, unsigned int *adjency_matrix, unsigned int n_macro_clusters, unsigned int n_micro_clusters)
+
+unsigned int *regroup_adjency_matrix(struct Macro_Clusters *macro_clusters_arr, struct Micro_Cluster *micro_clusters_arr, unsigned int *adjency_matrix, unsigned int n_macro_clusters, unsigned int n_micro_clusters, unsigned int *how_much_to_exclude)
 {
     unsigned int cluster_to_exclude_index = 0;
     unsigned int *clusters_to_exclude = (unsigned int *)calloc(1, sizeof(unsigned int));
@@ -39,6 +40,17 @@ void regroup_adjency_matrix(struct Macro_Clusters *macro_clusters_arr, struct Mi
             {
                 clusters_to_exclude[cluster_to_exclude_index] = macro_clusters_arr[i].group_of_micro_clusters[j];
                 cluster_to_exclude_index++;
+
+                if (adjency_matrix != NULL)
+                {
+                    for (unsigned int ii = 0; ii < n_micro_clusters; ii++)
+                    {
+                        unsigned int val = macro_clusters_arr[i].group_of_micro_clusters[j];
+                        adjency_matrix[(ii * n_micro_clusters) + val] = 0;
+                        adjency_matrix[(val * n_micro_clusters) + ii] = 0;
+                    }
+                }
+
                 unsigned int *new_clusters_to_exclude = (unsigned int *)realloc(clusters_to_exclude, (cluster_to_exclude_index + 1) * sizeof(unsigned int));
                 if (new_clusters_to_exclude == NULL)
                 {
@@ -51,16 +63,8 @@ void regroup_adjency_matrix(struct Macro_Clusters *macro_clusters_arr, struct Mi
     }
     if (cluster_to_exclude_index > 0)
     {
-        for (unsigned int i = 0; i < cluster_to_exclude_index; i++)
-        {
-            unsigned int to_exclude = clusters_to_exclude[i];
-            for (unsigned int j = 0; j < n_micro_clusters; j++)
-            {
-                adjency_matrix[(j * n_micro_clusters) + to_exclude] = 0;
-                adjency_matrix[(to_exclude * n_micro_clusters) + j] = 0;
-            }
-        }
+        *how_much_to_exclude = cluster_to_exclude_index;
+        return clusters_to_exclude;
     }
-    free(clusters_to_exclude);
-    return;
+    return NULL;
 }

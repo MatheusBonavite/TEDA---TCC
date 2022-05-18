@@ -19,15 +19,28 @@ struct Micro_Cluster
     double outlier_threshold_parameter;
 };
 void recursive_mean(double *mi_current, double *sample_current, unsigned int matrix_index, unsigned int columns);
-struct Macro_Clusters *bfs_grouping(struct Macro_Clusters *macro_clusters_arr, struct Micro_Cluster *micro_clusters_arr, unsigned int *adjency_matrix, unsigned int *number_of_macro_clusters, unsigned int number_of_micro_clusters)
+struct Macro_Clusters *bfs_grouping(struct Macro_Clusters *macro_clusters_arr, struct Micro_Cluster *micro_clusters_arr, unsigned int *adjency_matrix, unsigned int *clusters_to_exclude, unsigned int *number_of_macro_clusters, unsigned int number_of_micro_clusters, unsigned int exclude_index)
 {
     unsigned int *visited = (unsigned int *)calloc((number_of_micro_clusters), sizeof(unsigned int));
     for (unsigned int w = 0; w < number_of_micro_clusters; w++)
     {
+        unsigned int skip = 0;
         unsigned int start_point = w;
         if (visited[start_point] == 1)
+            skip = 1;
+        if (exclude_index > 0)
+        {
+            for (unsigned int alt = 0; alt < exclude_index; alt++)
+            {
+                if (clusters_to_exclude[alt] == start_point)
+                {
+                    skip = 1;
+                    break;
+                }
+            }
+        }
+        if (skip == 1)
             continue;
-
         unsigned int *queue = (unsigned int *)calloc((number_of_micro_clusters), sizeof(unsigned int));
         unsigned int front = 0, rear = 0;
         queue[rear] = start_point;
