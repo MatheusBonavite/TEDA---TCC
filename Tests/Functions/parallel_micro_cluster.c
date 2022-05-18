@@ -16,7 +16,7 @@ struct Micro_Cluster
 double empirical_m(int k);
 void recursive_eccentricity(unsigned int matrix_index, double *sample_current, double *mi_current, double *sigma_current, double *eccentricity, unsigned int columns);
 
-struct Micro_Cluster *allocate_initial_micro_cluster(unsigned int *number_of_micro_clusters, double *sample_current, unsigned int columns)
+struct Micro_Cluster *p_allocate_initial_micro_cluster(unsigned int *number_of_micro_clusters, double *sample_current, unsigned int columns)
 {
     struct Micro_Cluster *temp = (struct Micro_Cluster *)calloc(1, sizeof(struct Micro_Cluster));
     if (temp == NULL)
@@ -37,12 +37,12 @@ struct Micro_Cluster *allocate_initial_micro_cluster(unsigned int *number_of_mic
         return temp;
     }
 }
-struct Micro_Cluster *update_micro_cluster(struct Micro_Cluster *micro_clusters_arr, unsigned int *number_of_micro_clusters, double *sample_current, unsigned int k, unsigned int columns)
+struct Micro_Cluster *p_update_micro_cluster(struct Micro_Cluster *micro_clusters_arr, unsigned int *number_of_micro_clusters, double *sample_current, unsigned int k, unsigned int columns)
 {
     double r_0 = 0.001;
     if ((k + 1) == 1)
     {
-        return allocate_initial_micro_cluster(number_of_micro_clusters, sample_current, columns);
+        return p_allocate_initial_micro_cluster(number_of_micro_clusters, sample_current, columns);
     }
     else
     {
