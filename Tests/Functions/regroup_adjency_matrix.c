@@ -33,14 +33,10 @@ unsigned int *regroup_adjency_matrix(struct Macro_Clusters *macro_clusters_arr, 
         for (unsigned int j = 0; j < macro_clusters_arr[i].n_micro_clusters; j++)
         {
             double activation_criteria = (double)2.0 / micro_clusters_arr[macro_clusters_arr[i].group_of_micro_clusters[j]].eccentricity;
-            if (activation_criteria >= macro_clusters_arr[i].micro_density_mean)
-            {
-            }
-            else
+            if (activation_criteria < macro_clusters_arr[i].micro_density_mean)
             {
                 clusters_to_exclude[cluster_to_exclude_index] = macro_clusters_arr[i].group_of_micro_clusters[j];
                 cluster_to_exclude_index++;
-
                 if (adjency_matrix != NULL)
                 {
                     for (unsigned int ii = 0; ii < n_micro_clusters; ii++)
@@ -50,7 +46,6 @@ unsigned int *regroup_adjency_matrix(struct Macro_Clusters *macro_clusters_arr, 
                         adjency_matrix[(val * n_micro_clusters) + ii] = 0;
                     }
                 }
-
                 unsigned int *new_clusters_to_exclude = (unsigned int *)realloc(clusters_to_exclude, (cluster_to_exclude_index + 1) * sizeof(unsigned int));
                 if (new_clusters_to_exclude == NULL)
                 {
@@ -61,9 +56,9 @@ unsigned int *regroup_adjency_matrix(struct Macro_Clusters *macro_clusters_arr, 
             }
         }
     }
-    if (cluster_to_exclude_index > 0)
+    *how_much_to_exclude = cluster_to_exclude_index;
+    if (clusters_to_exclude != NULL)
     {
-        *how_much_to_exclude = cluster_to_exclude_index;
         return clusters_to_exclude;
     }
     return NULL;

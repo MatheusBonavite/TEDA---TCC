@@ -22,6 +22,11 @@ void recursive_mean(double *mi_current, double *sample_current, unsigned int mat
 struct Macro_Clusters *bfs_grouping(struct Macro_Clusters *macro_clusters_arr, struct Micro_Cluster *micro_clusters_arr, unsigned int *adjency_matrix, unsigned int *clusters_to_exclude, unsigned int *number_of_macro_clusters, unsigned int number_of_micro_clusters, unsigned int exclude_index)
 {
     unsigned int *visited = (unsigned int *)calloc((number_of_micro_clusters), sizeof(unsigned int));
+    if (visited == NULL)
+    {
+        printf("Could not allocate memory \n");
+        exit(1);
+    }
     for (unsigned int w = 0; w < number_of_micro_clusters; w++)
     {
         unsigned int skip = 0;

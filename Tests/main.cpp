@@ -189,10 +189,14 @@ TEST_CASE("General test for gaussian distribution, centers: [1.0, 2.0], [2.0, 2.
         test_2d[0] = centers[center_index][0] + distN(e);
         test_2d[1] = centers[center_index][1] + distN(e);
         micro_clusters_arr = update_micro_cluster(micro_clusters_arr, number_of_micro_clusters, test_2d, i, columns);
-        write_samples(test_2d);
         free(test_2d);
 
         unsigned int *adj_node = (unsigned int *)calloc(((*number_of_micro_clusters) * (*number_of_micro_clusters)), sizeof(unsigned int));
+        if (adj_node == NULL)
+        {
+            printf("Could not allocate memory \n");
+            exit(1);
+        }
         adjency_matrix(micro_clusters_arr, adj_node, *number_of_micro_clusters, columns);
         macro_clusters_arr = bfs_grouping(macro_clusters_arr, micro_clusters_arr, adj_node, inactivate_micros, number_of_macro_clusters, *number_of_micro_clusters, *how_much_to_exclude);
 
@@ -201,14 +205,8 @@ TEST_CASE("General test for gaussian distribution, centers: [1.0, 2.0], [2.0, 2.
         else
             *how_much_to_exclude = 0;
 
-        char *macro_before = "./plots/adjency_test_before.txt";
-        char *adjency_matrix_before = "adj_matrix_before.txt";
-        if (i == rows - 1)
-            write_macro_report(macro_before, macro_clusters_arr, micro_clusters_arr, number_of_macro_clusters, columns);
-        if (i == rows - 1)
-            write_adjency_matrix_report(adjency_matrix_before, adj_node, *number_of_micro_clusters);
-
         inactivate_micros = regroup_adjency_matrix(macro_clusters_arr, micro_clusters_arr, adj_node, *number_of_macro_clusters, *number_of_micro_clusters, how_much_to_exclude);
+
         if (*number_of_macro_clusters > 0)
         {
             for (unsigned int j = 0; j < *number_of_macro_clusters; j++)
@@ -220,13 +218,6 @@ TEST_CASE("General test for gaussian distribution, centers: [1.0, 2.0], [2.0, 2.
             *number_of_macro_clusters = 0;
         }
         macro_clusters_arr = bfs_grouping(macro_clusters_arr, micro_clusters_arr, adj_node, inactivate_micros, number_of_macro_clusters, *number_of_micro_clusters, *how_much_to_exclude);
-
-        char *macro_after = "./plots/adjency_test_after.txt";
-        char *adjency_matrix_after = "adj_matrix_after.txt";
-        if (i == rows - 1)
-            write_macro_report(macro_after, macro_clusters_arr, micro_clusters_arr, number_of_macro_clusters, columns);
-        if (i == rows - 1)
-            write_adjency_matrix_report(adjency_matrix_after, adj_node, *number_of_micro_clusters);
 
         if (*number_of_macro_clusters > 0)
         {

@@ -20,7 +20,6 @@ void adjency_matrix(struct Micro_Cluster *micro_clusters_arr, unsigned int *adj_
 struct Macro_Clusters *bfs_grouping(struct Macro_Clusters *macro_clusters_arr, struct Micro_Cluster *micro_clusters_arr, unsigned int *adjency_matrix, unsigned int *clusters_to_exclude, unsigned int *number_of_macro_clusters, unsigned int number_of_micro_clusters, unsigned int exclude_index);
 unsigned int *int_matrix_allocation(unsigned int rows, unsigned int columns);
 unsigned int *regroup_adjency_matrix(struct Macro_Clusters *macro_clusters_arr, struct Micro_Cluster *micro_clusters_arr, unsigned int *adjency_matrix, unsigned int n_macro_clusters, unsigned int n_micro_clusters, unsigned int *how_much_to_exclude);
-
 struct Micro_Cluster
 {
     unsigned int number_of_data_samples;
