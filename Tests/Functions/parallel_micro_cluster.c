@@ -48,7 +48,7 @@ struct Micro_Cluster *p_update_micro_cluster(struct Micro_Cluster *micro_cluster
     {
         /* Getting the parent_id and creating a pipe! */
         int parent_id = getpid();
-        int parent_to_child[2]; // 0 - read | 1 - write
+        int parent_to_child[2];
         int child_to_parent[2];
         if (pipe(parent_to_child) == -1 || pipe(child_to_parent) == -1)
         {
@@ -115,6 +115,7 @@ struct Micro_Cluster *p_update_micro_cluster(struct Micro_Cluster *micro_cluster
             close(parent_to_child[0]);
             close(parent_to_child[1]);
             close(child_to_parent[0]);
+            return micro_clusters_arr;
         }
         else
         {
@@ -147,7 +148,6 @@ struct Micro_Cluster *p_update_micro_cluster(struct Micro_Cluster *micro_cluster
 
                 outlier = (temp.eccentricity / 2.0) > (((squared_threshold + 1.0) / (2 * (temp.number_of_data_samples + 1.0))));
             }
-
             if (outlier == 0)
             {
                 unsigned int flag = 0;
@@ -171,5 +171,4 @@ struct Micro_Cluster *p_update_micro_cluster(struct Micro_Cluster *micro_cluster
         }
         /*---*/
     }
-    return micro_clusters_arr;
 }

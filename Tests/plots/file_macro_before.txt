@@ -1014,7 +1014,7 @@
 [13]|1|: Micro Center:  {0.949103} {1.209833} Micro Radius: (0.000000) Micro Variance: 0.000000 Micro Eccentricity: 0.000000 Micro Density: inf Micro Density Mean: 0.000000 Micro Index: 197
 [14]|1|: Micro Center:  {0.677961} {2.576114} Micro Radius: (0.024366) Micro Variance: 0.024250 Micro Eccentricity: 1.000000 Micro Density: 2.000000 Micro Density Mean: 2.000000 Micro Index: 215
 [15]|1|: Micro Center:  {1.199884} {1.450094} Micro Radius: (0.018590) Micro Variance: 0.018416 Micro Eccentricity: 0.492691 Micro Density: 4.059340 Micro Density Mean: 4.059340 Micro Index: 228
-[16]|1|: Micro Center:  {0.643079} {2.715313} Micro Radius: (0.000000) Micro Variance: 0.000000 Micro Eccentricity: 0.000000 Micro Density: inf Micro Density Mean: 0.000000 Micro Index: 246
+[16]|1|: Micro Center:  {0.643079} {2.715313} Micro Radius: (0.000000) Micro Variance: 0.000000 Micro Eccentricity: -26815615859885200153410879426023339635019365859717932180477149637953077886114805641400796821289594743537151163524101175474084764156422771408323839623430144.000000 Micro Density: -0.000000 Micro Density Mean: 0.000000 Micro Index: 246
 [17]|1|: Micro Center:  {0.639015} {1.350320} Micro Radius: (0.022363) Micro Variance: 0.022257 Micro Eccentricity: 1.000000 Micro Density: 2.000000 Micro Density Mean: 2.000000 Micro Index: 266
 [18]|1|: Micro Center:  {0.939214} {2.617426} Micro Radius: (0.009525) Micro Variance: 0.009480 Micro Eccentricity: 1.000000 Micro Density: 2.000000 Micro Density Mean: 2.000000 Micro Index: 292
 [19]|1|: Micro Center:  {0.978590} {2.831327} Micro Radius: (0.000000) Micro Variance: 0.000000 Micro Eccentricity: 0.000000 Micro Density: inf Micro Density Mean: 0.000000 Micro Index: 319
@@ -1022,12 +1022,12 @@
 [21]|1|: Micro Center:  {0.397270} {1.800104} Micro Radius: (0.000000) Micro Variance: 0.000000 Micro Eccentricity: 0.000000 Micro Density: inf Micro Density Mean: 0.000000 Micro Index: 341
 [22]|1|: Micro Center:  {0.195593} {1.906995} Micro Radius: (0.000000) Micro Variance: 0.000000 Micro Eccentricity: 0.000000 Micro Density: inf Micro Density Mean: 0.000000 Micro Index: 352
 [23]|1|: Micro Center:  {1.167371} {1.325080} Micro Radius: (0.000000) Micro Variance: 0.000000 Micro Eccentricity: 0.000000 Micro Density: inf Micro Density Mean: 0.000000 Micro Index: 362
-[24]|1|: Micro Center:  {0.809612} {2.785340} Micro Radius: (0.000000) Micro Variance: 0.000000 Micro Eccentricity: 0.000000 Micro Density: inf Micro Density Mean: 0.000000 Micro Index: 381
+[24]|1|: Micro Center:  {0.809612} {2.785340} Micro Radius: (0.000000) Micro Variance: 0.000000 Micro Eccentricity: -26815615859885206107673708855634987015080000078251077605507176388462627712082517329197845046245382631694238610675230249240661762688952402923780381234692096.000000 Micro Density: -0.000000 Micro Density Mean: 0.000000 Micro Index: 381
 [25]|1|: Micro Center:  {1.082619} {2.791547} Micro Radius: (0.000000) Micro Variance: 0.000000 Micro Eccentricity: 0.000000 Micro Density: inf Micro Density Mean: 0.000000 Micro Index: 383
 [26]|1|: Micro Center:  {0.389839} {1.255685} Micro Radius: (0.000000) Micro Variance: 0.000000 Micro Eccentricity: 0.000000 Micro Density: inf Micro Density Mean: 0.000000 Micro Index: 392
 [27]|1|: Micro Center:  {0.578143} {1.506709} Micro Radius: (0.000000) Micro Variance: 0.000000 Micro Eccentricity: 0.000000 Micro Density: inf Micro Density Mean: 0.000000 Micro Index: 415
 [28]|1|: Micro Center:  {1.368508} {2.660536} Micro Radius: (0.000000) Micro Variance: 0.000000 Micro Eccentricity: 0.000000 Micro Density: inf Micro Density Mean: 0.000000 Micro Index: 425
-[29]|1|: Micro Center:  {0.598593} {1.439640} Micro Radius: (0.000000) Micro Variance: 0.000000 Micro Eccentricity: 2.000000 Micro Density: 1.000000 Micro Density Mean: 1.000000 Micro Index: 440
+[29]|1|: Micro Center:  {0.598593} {1.439640} Micro Radius: (0.000000) Micro Variance: 0.000000 Micro Eccentricity: 0.000000 Micro Density: inf Micro Density Mean: 0.000000 Micro Index: 440
 [30]|1|: Micro Center:  {0.980232} {1.525259} Micro Radius: (0.000000) Micro Variance: 0.000000 Micro Eccentricity: 0.000000 Micro Density: inf Micro Density Mean: 0.000000 Micro Index: 489
 [31]|1|: Micro Center:  {0.540170} {1.331462} Micro Radius: (0.000000) Micro Variance: 0.000000 Micro Eccentricity: 0.000000 Micro Density: inf Micro Density Mean: 0.000000 Micro Index: 491
 [32]|1|: Micro Center:  {1.233950} {2.611942} Micro Radius: (0.000000) Micro Variance: 0.000000 Micro Eccentricity: 0.000000 Micro Density: inf Micro Density Mean: 0.000000 Micro Index: 511

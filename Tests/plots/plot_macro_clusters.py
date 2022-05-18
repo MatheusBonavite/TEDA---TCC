@@ -1,24 +1,23 @@
 import matplotlib.pyplot as plt
+import random
 import re
+color_index = []
+color_value = {}
 
 def value_for_color(value):
-    if(int(value) == 0):
-        return 'b'
-    if(int(value) == 7):
-        return 'r'
-    if(int(value) >= 1000):
-        return f"#24{value}"
-    if(int(value) >= 100):
-        return f"#381{value}"
-    if(int(value) >= 10):
-        return f"#578C{value}"
-    return f"#A262D{value}"
+    hexadecimal = ["#"+''.join([random.choice('ABCDEF0123456789') for i in range(6)])]
+    if(int(value) in color_index):
+        return color_value[value]
+    else:
+        color_value[value] = hexadecimal[0]
+        color_index.append(int(value))
+        return hexadecimal[0]
 
 fig, ax = plt.subplots()
 ax.set_xlim((0, 3))
 ax.set_ylim((1, 3))
 
-filename = "file_macro_after.txt"
+filename = "file_macro_before.txt"
 filehandle = open(filename, 'r')
 x_vec = []
 rad_vec = []
@@ -47,6 +46,6 @@ while True:
     circles = plt.Circle((float(x[0]), float(x[1])), float(rad[0]), color=value_for_color(col[0]), fill=False)
     ax.add_patch(circles)
     
-fig.savefig('plot_macro_clusters_after.png')
+fig.savefig('plot_macro_clusters_before.png')
 filehandle.close()
 filehandle2.close()

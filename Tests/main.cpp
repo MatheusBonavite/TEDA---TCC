@@ -54,9 +54,9 @@ void write_macro_report(char *file_name, struct Macro_Clusters *macro_clusters_a
     return;
 }
 
-void write_samples(double *test_2d)
+void write_samples(char *file_name, double *test_2d)
 {
-    FILE *file_samples = fopen("./plots/samples.txt", "a+");
+    FILE *file_samples = fopen(file_name, "a+");
     if (file_samples == NULL)
     {
         printf("Could not fopen! \n");
@@ -65,6 +65,31 @@ void write_samples(double *test_2d)
     int file_i = 0;
     char *buffer = (char *)calloc(50, sizeof(char));
     sprintf(buffer, "%lf %lf \n", test_2d[0], test_2d[1]);
+    while (file_i < strlen(buffer))
+    {
+        int result = fputc(buffer[file_i], file_samples);
+        if (result == EOF)
+        {
+            printf("Failed to write character! \n");
+            exit(1);
+        }
+        file_i++;
+    }
+    free(buffer);
+    fclose(file_samples);
+}
+
+void write_classified_samples(char *file_name, unsigned int class_value, double *test_2d)
+{
+    FILE *file_samples = fopen(file_name, "a+");
+    if (file_samples == NULL)
+    {
+        printf("Could not fopen! \n");
+        return;
+    }
+    int file_i = 0;
+    char *buffer = (char *)calloc(50, sizeof(char));
+    sprintf(buffer, "%u %lf %lf \n", class_value, test_2d[0], test_2d[1]);
     while (file_i < strlen(buffer))
     {
         int result = fputc(buffer[file_i], file_samples);
@@ -174,6 +199,11 @@ TEST_CASE("General test for gaussian distribution, centers: [1.0, 2.0], [2.0, 2.
     unsigned int *how_much_to_exclude = &how_much_exclude;
     unsigned int *inactivate_micros;
 
+    char *samples_file_name = "./plots/samples.txt";
+    char *classified_samples_file_name = "./plots/classified_samples.txt";
+    char *file_macro_before = "./plots/file_macro_before.txt";
+    char *file_macro_after = "./plots/file_macro_after.txt";
+
     for (unsigned int i = 0; i < rows; i++)
     {
         double *test_2d = (double *)calloc(1, columns * sizeof(double));
@@ -189,8 +219,7 @@ TEST_CASE("General test for gaussian distribution, centers: [1.0, 2.0], [2.0, 2.
         test_2d[0] = centers[center_index][0] + distN(e);
         test_2d[1] = centers[center_index][1] + distN(e);
         micro_clusters_arr = update_micro_cluster(micro_clusters_arr, number_of_micro_clusters, test_2d, i, columns);
-        write_samples(test_2d);
-        free(test_2d);
+        write_samples(samples_file_name, test_2d);
 
         unsigned int *adj_node = (unsigned int *)calloc(((*number_of_micro_clusters) * (*number_of_micro_clusters)), sizeof(unsigned int));
         if (adj_node == NULL)
@@ -201,10 +230,7 @@ TEST_CASE("General test for gaussian distribution, centers: [1.0, 2.0], [2.0, 2.
         adjency_matrix(micro_clusters_arr, adj_node, *number_of_micro_clusters, columns);
         macro_clusters_arr = bfs_grouping(macro_clusters_arr, micro_clusters_arr, adj_node, inactivate_micros, number_of_macro_clusters, *number_of_micro_clusters, *how_much_to_exclude);
         if (i == rows - 1)
-        {
-            char *file_macro_before = "./plots/file_macro_before.txt";
             write_macro_report(file_macro_before, macro_clusters_arr, micro_clusters_arr, number_of_macro_clusters, columns);
-        }
 
         if (*how_much_to_exclude > 0)
             free(inactivate_micros);
@@ -224,11 +250,30 @@ TEST_CASE("General test for gaussian distribution, centers: [1.0, 2.0], [2.0, 2.
             *number_of_macro_clusters = 0;
         }
         macro_clusters_arr = bfs_grouping(macro_clusters_arr, micro_clusters_arr, adj_node, inactivate_micros, number_of_macro_clusters, *number_of_micro_clusters, *how_much_to_exclude);
-        if (i == rows - 1)
+
+        unsigned int which_macro = 0;
+        for (unsigned int macro_row = 0; macro_row < *number_of_macro_clusters; macro_row++)
         {
-            char *file_macro_before = "./plots/file_macro_after.txt";
-            write_macro_report(file_macro_before, macro_clusters_arr, micro_clusters_arr, number_of_macro_clusters, columns);
+            double weird_t = 0;
+            double comparison_weird_t = 0;
+            double t_value = 0;
+            for (unsigned int micro_row = 0; micro_row < macro_clusters_arr[macro_row].n_micro_clusters; micro_row++)
+            {
+                unsigned int micro_index_value = macro_clusters_arr[macro_row].group_of_micro_clusters[micro_row];
+                double density_sum = macro_clusters_arr[macro_row].micro_density_mean * macro_clusters_arr[macro_row].n_micro_clusters;
+                double small_w = (2.0 / micro_clusters_arr[micro_index_value].eccentricity) / density_sum;
+                t_value = (1 - micro_clusters_arr[micro_index_value].eccentricity);
+                weird_t += small_w + t_value;
+            }
+            if (comparison_weird_t < weird_t)
+            {
+                comparison_weird_t = weird_t;
+                which_macro = macro_row;
+            }
         }
+        write_classified_samples(classified_samples_file_name, which_macro, test_2d);
+        if (i == rows - 1)
+            write_macro_report(file_macro_after, macro_clusters_arr, micro_clusters_arr, number_of_macro_clusters, columns);
 
         if (*number_of_macro_clusters > 0)
         {
@@ -241,6 +286,7 @@ TEST_CASE("General test for gaussian distribution, centers: [1.0, 2.0], [2.0, 2.
             *number_of_macro_clusters = 0;
         }
         free(adj_node);
+        free(test_2d);
     }
     if (*number_of_micro_clusters > 0)
     {
