@@ -43,7 +43,10 @@ struct Macro_Clusters *bfs_grouping(struct Macro_Clusters *macro_clusters_arr, s
             start_point = queue[front];
             for (unsigned int i = 0; i < number_of_micro_clusters; i++)
             {
-                if (visited[i] == 0 && adjency_matrix[(start_point * number_of_micro_clusters) + i] == 1)
+                if (
+                    visited[i] == 0 &&
+                    adjency_matrix[(start_point * number_of_micro_clusters) + i] == 1 &&
+                    micro_clusters_arr[i].active == 1)
                 {
                     queue[++rear] = i;
                     visited[i] = 1;
