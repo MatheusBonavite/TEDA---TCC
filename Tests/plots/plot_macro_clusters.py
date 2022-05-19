@@ -17,7 +17,7 @@ fig, ax = plt.subplots()
 ax.set_xlim((0, 3))
 ax.set_ylim((1, 3))
 
-filename = "file_macro_before.txt"
+filename = "file_macro_after.txt"
 filehandle = open(filename, 'r')
 x_vec = []
 rad_vec = []
@@ -46,6 +46,6 @@ while True:
     circles = plt.Circle((float(x[0]), float(x[1])), float(rad[0]), color=value_for_color(col[0]), fill=False)
     ax.add_patch(circles)
     
-fig.savefig('plot_macro_clusters_before.png')
+fig.savefig('plot_macro_clusters_after.png')
 filehandle.close()
 filehandle2.close()

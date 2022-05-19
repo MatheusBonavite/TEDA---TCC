@@ -30,6 +30,8 @@ struct Macro_Clusters *bfs_grouping(struct Macro_Clusters *macro_clusters_arr, s
         unsigned int start_point = w;
         if (visited[start_point] == 1)
             continue;
+        if (micro_clusters_arr[start_point].active == 0)
+            continue;
         unsigned int *queue = (unsigned int *)calloc((number_of_micro_clusters), sizeof(unsigned int));
         unsigned int front = 0, rear = 0;
         queue[rear] = start_point;
