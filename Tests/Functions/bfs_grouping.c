@@ -14,12 +14,10 @@ struct Micro_Cluster
     double *center;
     double variance;
     double eccentricity;
-    double typicality;
-    double density;
-    double outlier_threshold_parameter;
+    unsigned int active;
 };
 void recursive_mean(double *mi_current, double *sample_current, unsigned int matrix_index, unsigned int columns);
-struct Macro_Clusters *bfs_grouping(struct Macro_Clusters *macro_clusters_arr, struct Micro_Cluster *micro_clusters_arr, unsigned int *adjency_matrix, unsigned int *clusters_to_exclude, unsigned int *number_of_macro_clusters, unsigned int number_of_micro_clusters, unsigned int exclude_index)
+struct Macro_Clusters *bfs_grouping(struct Macro_Clusters *macro_clusters_arr, struct Micro_Cluster *micro_clusters_arr, unsigned int *adjency_matrix, unsigned int *number_of_macro_clusters, unsigned int number_of_micro_clusters)
 {
     unsigned int *visited = (unsigned int *)calloc((number_of_micro_clusters), sizeof(unsigned int));
     if (visited == NULL)
@@ -29,22 +27,8 @@ struct Macro_Clusters *bfs_grouping(struct Macro_Clusters *macro_clusters_arr, s
     }
     for (unsigned int w = 0; w < number_of_micro_clusters; w++)
     {
-        unsigned int skip = 0;
         unsigned int start_point = w;
         if (visited[start_point] == 1)
-            skip = 1;
-        if (exclude_index > 0)
-        {
-            for (unsigned int alt = 0; alt < exclude_index; alt++)
-            {
-                if (clusters_to_exclude[alt] == start_point)
-                {
-                    skip = 1;
-                    break;
-                }
-            }
-        }
-        if (skip == 1)
             continue;
         unsigned int *queue = (unsigned int *)calloc((number_of_micro_clusters), sizeof(unsigned int));
         unsigned int front = 0, rear = 0;
@@ -57,7 +41,7 @@ struct Macro_Clusters *bfs_grouping(struct Macro_Clusters *macro_clusters_arr, s
             start_point = queue[front];
             for (unsigned int i = 0; i < number_of_micro_clusters; i++)
             {
-                if (adjency_matrix[(start_point * number_of_micro_clusters) + i] == 1 && visited[i] == 0)
+                if (visited[i] == 0 && adjency_matrix[(start_point * number_of_micro_clusters) + i] == 1)
                 {
                     queue[++rear] = i;
                     visited[i] = 1;
@@ -65,6 +49,8 @@ struct Macro_Clusters *bfs_grouping(struct Macro_Clusters *macro_clusters_arr, s
             }
             front++;
         }
+
+        /* Allocating either first macro cluster or the next one! */
         if (*number_of_macro_clusters == 0)
         {
             macro_clusters_arr = (struct Macro_Clusters *)calloc(1, sizeof(struct Macro_Clusters));
@@ -84,39 +70,28 @@ struct Macro_Clusters *bfs_grouping(struct Macro_Clusters *macro_clusters_arr, s
             }
             macro_clusters_arr = new_macro_arr;
         }
-        double density_mean = 0.0;
-        unsigned int computing_density_mean = 0;
-        double *current_density_mean = &density_mean;
+        /*---*/
+
+        /* After allocating first or next macro, allocate the group of micro clusters that belong to that macro */
         macro_clusters_arr[*number_of_macro_clusters].group_of_micro_clusters = (unsigned int *)calloc(rear + 1, sizeof(unsigned int));
         macro_clusters_arr[*number_of_macro_clusters].n_micro_clusters = rear + 1;
-
         if (macro_clusters_arr[*number_of_macro_clusters].group_of_micro_clusters == NULL)
         {
             printf("Could not allocate memory \n");
             exit(1);
         }
+        /*---*/
+
+        /* Push all the micro indexes to that macros group */
         for (unsigned int wu = 0; wu < rear; wu++)
         {
             unsigned int micro_index = queue[wu];
             macro_clusters_arr[*number_of_macro_clusters].group_of_micro_clusters[wu] = micro_index;
-            if (micro_clusters_arr[micro_index].eccentricity > 0.000001)
-            {
-                double density = 2.0 / micro_clusters_arr[micro_index].eccentricity;
-                double *current_density = &density;
-                recursive_mean(current_density_mean, current_density, computing_density_mean, 1);
-                computing_density_mean++;
-            }
         }
         macro_clusters_arr[*number_of_macro_clusters].group_of_micro_clusters[rear] = start_point;
-
-        if (micro_clusters_arr[start_point].eccentricity > 0.000001)
-        {
-            double density = 2.0 / micro_clusters_arr[start_point].eccentricity;
-            double *current_density = &density;
-            recursive_mean(current_density_mean, current_density, computing_density_mean, 1);
-        }
-        macro_clusters_arr[*number_of_macro_clusters].micro_density_mean = *current_density_mean;
         *number_of_macro_clusters = *number_of_macro_clusters + 1;
+        /*---*/
+
         free(queue);
     }
     free(visited);

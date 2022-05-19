@@ -7,9 +7,7 @@ struct Micro_Cluster
     double *center;
     double variance;
     double eccentricity;
-    double typicality;
-    double density;
-    double outlier_threshold_parameter;
+    unsigned int active;
 };
 double empirical_m(int k);
 void recursive_eccentricity(unsigned int matrix_index, double *sample_current, double *mi_current, double *sigma_current, double *eccentricity, unsigned int columns);
@@ -26,12 +24,14 @@ struct Micro_Cluster *allocate_initial_micro_cluster(unsigned int *number_of_mic
     {
         (*number_of_micro_clusters) = 1;
         temp[0].number_of_data_samples = 1;
-        temp[0].center = (double *)malloc(columns * sizeof(double));
+        temp[0].center = (double *)calloc(columns, sizeof(double));
         for (unsigned int i = 0; i < columns; i++)
         {
             temp[0].center[i] = sample_current[i];
         }
         temp[0].variance = 0.0;
+        temp[0].active = 1;
+        temp[0].eccentricity = 0.0;
         return temp;
     }
 }
@@ -52,7 +52,7 @@ struct Micro_Cluster *update_micro_cluster(struct Micro_Cluster *micro_clusters_
             temp.number_of_data_samples = micro_clusters_arr[i].number_of_data_samples;
             temp.variance = micro_clusters_arr[i].variance;
             temp.eccentricity = micro_clusters_arr[i].eccentricity;
-            temp.center = (double *)malloc(columns * sizeof(double));
+            temp.center = (double *)calloc(columns, sizeof(double));
             for (unsigned int j = 0; j < columns; j++)
             {
                 temp.center[j] = micro_clusters_arr[i].center[j];
@@ -60,17 +60,16 @@ struct Micro_Cluster *update_micro_cluster(struct Micro_Cluster *micro_clusters_
             recursive_eccentricity(temp.number_of_data_samples, sample_current, temp.center, &temp.variance, &temp.eccentricity, columns);
             if (temp.number_of_data_samples == 1)
             {
-                temp.outlier_threshold_parameter = empirical_m(2);
-                double squared_threshold = temp.outlier_threshold_parameter * temp.outlier_threshold_parameter;
-                int first_condition = (temp.eccentricity / 2.0) > ((squared_threshold + 1.0) / 4.0);
-                int second_condition = temp.variance > r_0;
-                outlier = first_condition || second_condition;
+                double empirical_m_value = empirical_m(2);
+                double squared_threshold = empirical_m_value * empirical_m_value;
+                unsigned int special_condition = temp.variance > r_0;
+                outlier = special_condition;
             }
             else
             {
-                temp.outlier_threshold_parameter = empirical_m(temp.number_of_data_samples + 1.0);
+                double empirical_m_value = empirical_m(temp.number_of_data_samples + 1.0);
 
-                double squared_threshold = temp.outlier_threshold_parameter * temp.outlier_threshold_parameter;
+                double squared_threshold = empirical_m_value * empirical_m_value;
 
                 outlier = (temp.eccentricity / 2.0) > (((squared_threshold + 1.0) / (2 * (temp.number_of_data_samples + 1.0))));
             }
@@ -99,12 +98,14 @@ struct Micro_Cluster *update_micro_cluster(struct Micro_Cluster *micro_clusters_
             }
             micro_clusters_arr = new_micro_arr;
             micro_clusters_arr[(*number_of_micro_clusters) - 1].number_of_data_samples = 1;
-            micro_clusters_arr[(*number_of_micro_clusters) - 1].center = (double *)malloc(columns * sizeof(double));
+            micro_clusters_arr[(*number_of_micro_clusters) - 1].center = (double *)calloc(columns, sizeof(double));
             for (unsigned int i = 0; i < columns; i++)
             {
                 micro_clusters_arr[(*number_of_micro_clusters) - 1].center[i] = sample_current[i];
             }
+            micro_clusters_arr[(*number_of_micro_clusters) - 1].active = 1;
             micro_clusters_arr[(*number_of_micro_clusters) - 1].variance = 0.0;
+            micro_clusters_arr[(*number_of_micro_clusters) - 1].eccentricity = 0.0;
         }
     }
     return micro_clusters_arr;
