@@ -191,21 +191,21 @@ void write_micro_report(struct Micro_Cluster *micro_clusters_arr, unsigned numbe
 
 TEST_CASE("General test for gaussian distribution, centers: [1.0, 2.0], [2.0, 2.0]")
 {
-    std::default_random_engine e(0.5);
+    std::default_random_engine e(0.25);
     std::normal_distribution<double> distN(0, 0.25);
 
     struct Macro_Clusters *macro_clusters_arr;
     unsigned int macr = 0;
     unsigned int *number_of_macro_clusters = &macr;
 
-    unsigned int rows = 7000;
+    unsigned int rows = 5000;
     unsigned int columns = 2;
 
     struct Micro_Cluster *micro_clusters_arr;
     unsigned int n = 0;
     unsigned int *number_of_micro_clusters = &n;
 
-    double centers[2][2] = {{1.0, 2.0}, {2.0, 2.0}};
+    double centers[2][2] = {{1.0, 2.0}, {1.5, 2.5}};
     unsigned int center_index = 0;
 
     char *samples_file_name = "./plots/samples.txt";
@@ -243,7 +243,7 @@ TEST_CASE("General test for gaussian distribution, centers: [1.0, 2.0], [2.0, 2.
             exit(1);
         }
         adjency_matrix(micro_clusters_arr, adj_node, *number_of_micro_clusters, columns);
-        macro_clusters_arr = bfs_grouping(macro_clusters_arr, micro_clusters_arr, adj_node, number_of_macro_clusters, *number_of_micro_clusters);
+        macro_clusters_arr = bfs_grouping(macro_clusters_arr, micro_clusters_arr, adj_node, number_of_macro_clusters, *number_of_micro_clusters, 1);
         regroup_adjency_matrix(macro_clusters_arr, micro_clusters_arr, adj_node, *number_of_macro_clusters, *number_of_micro_clusters);
 
         if (i == rows - 1)
@@ -268,7 +268,7 @@ TEST_CASE("General test for gaussian distribution, centers: [1.0, 2.0], [2.0, 2.
             exit(1);
         }
         adjency_matrix(micro_clusters_arr, adj_node, *number_of_micro_clusters, columns);
-        macro_clusters_arr = bfs_grouping(macro_clusters_arr, micro_clusters_arr, adj_node, number_of_macro_clusters, *number_of_micro_clusters);
+        macro_clusters_arr = bfs_grouping(macro_clusters_arr, micro_clusters_arr, adj_node, number_of_macro_clusters, *number_of_micro_clusters, 1);
 
         if (i == rows - 1)
             write_macro_report(file_macro_after, macro_clusters_arr, micro_clusters_arr, number_of_macro_clusters, columns);

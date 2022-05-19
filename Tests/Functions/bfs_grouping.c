@@ -17,7 +17,7 @@ struct Micro_Cluster
     unsigned int active;
 };
 void recursive_mean(double *mi_current, double *sample_current, unsigned int matrix_index, unsigned int columns);
-struct Macro_Clusters *bfs_grouping(struct Macro_Clusters *macro_clusters_arr, struct Micro_Cluster *micro_clusters_arr, unsigned int *adjency_matrix, unsigned int *number_of_macro_clusters, unsigned int number_of_micro_clusters)
+struct Macro_Clusters *bfs_grouping(struct Macro_Clusters *macro_clusters_arr, struct Micro_Cluster *micro_clusters_arr, unsigned int *adjency_matrix, unsigned int *number_of_macro_clusters, unsigned int number_of_micro_clusters, unsigned int disconsider_unitary_macro)
 {
     unsigned int *visited = (unsigned int *)calloc((number_of_micro_clusters), sizeof(unsigned int));
     if (visited == NULL)
@@ -54,7 +54,11 @@ struct Macro_Clusters *bfs_grouping(struct Macro_Clusters *macro_clusters_arr, s
             }
             front++;
         }
-
+        if (rear == 0 && disconsider_unitary_macro == 1)
+        {
+            free(queue);
+            continue;
+        }
         /* Allocating either first macro cluster or the next one! */
         if (*number_of_macro_clusters == 0)
         {

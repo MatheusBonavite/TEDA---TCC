@@ -19,7 +19,7 @@ void adjency_matrix(struct Micro_Cluster *micro_clusters_arr, unsigned int *adj_
     {
         for (unsigned int j = 0; j < number_of_micro_clusters; j++)
         {
-            if ((j <= i))
+            if ((j <= i) || micro_clusters_arr[i].eccentricity < 0.000001 || micro_clusters_arr[j].eccentricity < 0.000001)
                 continue;
             double dist_centers = two_vec_euclidean_distance(micro_clusters_arr[i].center, micro_clusters_arr[j].center, columns);
             double variance_sum = 2.0 * (sqrt(micro_clusters_arr[i].variance) + sqrt(micro_clusters_arr[j].variance));
