@@ -15,7 +15,7 @@ def value_for_color(value):
 
 fig, ax = plt.subplots()
 ax.set_xlim((0, 3))
-ax.set_ylim((1, 3))
+ax.set_ylim((1, 4))
 
 filename = "file_macro_before.txt"
 filehandle = open(filename, 'r')

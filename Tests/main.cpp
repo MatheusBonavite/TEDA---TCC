@@ -6,7 +6,7 @@
 #include <string.h>
 #include "./header/global_header.h"
 
-void write_macro_report(char *file_name, struct Macro_Clusters *macro_clusters_arr, struct Micro_Cluster *micro_clusters_arr, unsigned int *number_of_macro_clusters, unsigned int columns)
+void write_macro_report(char *file_name, struct Macro_Clusters *macro_clusters_arr, struct Micro_Cluster *micro_clusters_arr, unsigned int *number_of_macro_clusters, unsigned int columns, unsigned int *inactives)
 {
     FILE *file_macros = fopen(file_name, "w+");
     if (file_macros == NULL)
@@ -16,6 +16,8 @@ void write_macro_report(char *file_name, struct Macro_Clusters *macro_clusters_a
     }
     for (unsigned int i = 0; i < *number_of_macro_clusters; i++)
     {
+        if (inactives[i] == 1)
+            continue;
         for (unsigned int w = 0; w < macro_clusters_arr[i].n_micro_clusters; w++)
         {
             char *buffer = (char *)calloc(550, sizeof(char));
@@ -189,6 +191,21 @@ void write_micro_report(struct Micro_Cluster *micro_clusters_arr, unsigned numbe
     fclose(micro_file);
 }
 
+unsigned int *filter_macros(struct Macro_Clusters *macro_clusters_arr, unsigned int macros_amount)
+{
+    double amount_of_micros_mean = 0.0;
+    unsigned int *inactive_macros = (unsigned int *)calloc(macros_amount, sizeof(unsigned int));
+    for (unsigned int i = 0; i < macros_amount; i++)
+        amount_of_micros_mean += macro_clusters_arr[i].n_micro_clusters;
+    amount_of_micros_mean = amount_of_micros_mean / macros_amount;
+    for (unsigned int i = 0; i < macros_amount; i++)
+    {
+        if (macro_clusters_arr[i].n_micro_clusters < (0.25 * amount_of_micros_mean))
+            inactive_macros[i] = 1;
+    }
+    return inactive_macros;
+}
+
 TEST_CASE("General test for gaussian distribution, centers: [1.0, 2.0], [2.0, 2.0]")
 {
     std::default_random_engine e(0.25);
@@ -205,7 +222,7 @@ TEST_CASE("General test for gaussian distribution, centers: [1.0, 2.0], [2.0, 2.
     unsigned int n = 0;
     unsigned int *number_of_micro_clusters = &n;
 
-    double centers[2][2] = {{1.0, 2.0}, {1.5, 2.5}};
+    double centers[3][2] = {{1.0, 2.0}, {1.5, 3.0}, {2.0, 2.0}};
     unsigned int center_index = 0;
 
     char *samples_file_name = "./plots/samples.txt";
@@ -223,11 +240,7 @@ TEST_CASE("General test for gaussian distribution, centers: [1.0, 2.0], [2.0, 2.
             printf("Could not allocate memory \n");
             exit(1);
         }
-        if (i % 2)
-            center_index = 1;
-        else
-            center_index = 0;
-
+        unsigned int center_index = rand() % 3;
         test_2d[0] = centers[center_index][0] + distN(e);
         test_2d[1] = centers[center_index][1] + distN(e);
 
@@ -245,9 +258,10 @@ TEST_CASE("General test for gaussian distribution, centers: [1.0, 2.0], [2.0, 2.
         adjency_matrix(micro_clusters_arr, adj_node, *number_of_micro_clusters, columns);
         macro_clusters_arr = bfs_grouping(macro_clusters_arr, micro_clusters_arr, adj_node, number_of_macro_clusters, *number_of_micro_clusters, 1);
         regroup_adjency_matrix(macro_clusters_arr, micro_clusters_arr, adj_node, *number_of_macro_clusters, *number_of_micro_clusters);
+        unsigned int *inactive_macros = (unsigned int *)calloc(*number_of_macro_clusters, sizeof(unsigned int *));
 
         if (i == rows - 1)
-            write_macro_report(file_macro_before, macro_clusters_arr, micro_clusters_arr, number_of_macro_clusters, columns);
+            write_macro_report(file_macro_before, macro_clusters_arr, micro_clusters_arr, number_of_macro_clusters, columns, inactive_macros);
 
         if (*number_of_macro_clusters > 0)
         {
@@ -269,10 +283,53 @@ TEST_CASE("General test for gaussian distribution, centers: [1.0, 2.0], [2.0, 2.
         }
         adjency_matrix(micro_clusters_arr, adj_node, *number_of_micro_clusters, columns);
         macro_clusters_arr = bfs_grouping(macro_clusters_arr, micro_clusters_arr, adj_node, number_of_macro_clusters, *number_of_micro_clusters, 1);
+        free(inactive_macros);
+
+        inactive_macros = filter_macros(macro_clusters_arr, *number_of_macro_clusters);
+
+        if (i > 2999)
+        {
+            unsigned int which_macro = 0;
+            double weird_t_comparison = 0.0;
+            for (unsigned int index_macro = 0; index_macro < *number_of_macro_clusters; index_macro++)
+            {
+                if (inactive_macros[index_macro] == 1)
+                {
+                    printf("Which macro was 'destroyed' ::: ", index_macro);
+                    continue;
+                }
+                double w_t = 0.0;
+                double typicality = 0.0;
+                double weird_t = 0.0;
+                double density_sum = 0.0;
+                for (unsigned int index_micro = 0; index_micro < macro_clusters_arr[index_macro].n_micro_clusters; index_micro++)
+                {
+                    if (micro_clusters_arr[index_micro].eccentricity > 0.00001)
+                        density_sum += (2.0 / micro_clusters_arr[index_micro].eccentricity);
+                }
+                for (unsigned int index_micro = 0; index_micro < macro_clusters_arr[index_macro].n_micro_clusters; index_micro++)
+                {
+                    if (micro_clusters_arr[index_micro].eccentricity > 0.00001)
+                        w_t += ((2.0 / micro_clusters_arr[index_micro].eccentricity) / density_sum);
+                    if (micro_clusters_arr[index_micro].number_of_data_samples > 2)
+                        typicality += ((1.0 - micro_clusters_arr[index_micro].eccentricity) / (micro_clusters_arr[index_micro].number_of_data_samples - 2.0));
+                    weird_t += w_t + typicality;
+                }
+                printf("[%u] weird_t value ::: %lf | condition is true? %u\n", index_macro, weird_t, (weird_t_comparison < weird_t));
+                if (weird_t_comparison < weird_t)
+                {
+                    which_macro = index_macro;
+                    weird_t_comparison = weird_t;
+                    printf("which_macro :::: %u\n", which_macro);
+                }
+            }
+            write_classified_samples(classified_samples_file_name, which_macro, test_2d);
+        }
 
         if (i == rows - 1)
-            write_macro_report(file_macro_after, macro_clusters_arr, micro_clusters_arr, number_of_macro_clusters, columns);
+            write_macro_report(file_macro_after, macro_clusters_arr, micro_clusters_arr, number_of_macro_clusters, columns, inactive_macros);
 
+        free(inactive_macros);
         if (*number_of_macro_clusters > 0)
         {
             for (unsigned int j = 0; j < *number_of_macro_clusters; j++)

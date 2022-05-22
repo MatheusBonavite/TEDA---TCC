@@ -57,13 +57,14 @@ struct Micro_Cluster *update_micro_cluster(struct Micro_Cluster *micro_clusters_
             {
                 temp.center[j] = micro_clusters_arr[i].center[j];
             }
-            recursive_eccentricity(temp.number_of_data_samples, sample_current, temp.center, &temp.variance, &temp.eccentricity, columns);
+            recursive_eccentricity(temp.number_of_data_samples + 1.0, sample_current, temp.center, &temp.variance, &temp.eccentricity, columns);
             if (temp.number_of_data_samples == 1)
             {
                 double empirical_m_value = empirical_m(2);
                 double squared_threshold = empirical_m_value * empirical_m_value;
-                unsigned int special_condition = temp.variance > r_0;
-                outlier = special_condition;
+                int first_condition = (temp.eccentricity / 2.0) > ((squared_threshold + 1.0) / 4.0);
+                int second_condition = temp.variance > r_0;
+                outlier = first_condition || second_condition;
             }
             else
             {
@@ -71,7 +72,7 @@ struct Micro_Cluster *update_micro_cluster(struct Micro_Cluster *micro_clusters_
 
                 double squared_threshold = empirical_m_value * empirical_m_value;
 
-                outlier = (temp.eccentricity / 2.0) > (((squared_threshold + 1.0) / (2 * (temp.number_of_data_samples + 1.0))));
+                outlier = (temp.eccentricity / 2.0) > ((squared_threshold + 1.0) / (2.0 * (temp.number_of_data_samples + 1.0)));
             }
 
             if (outlier == 0)
