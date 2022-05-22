@@ -6,6 +6,7 @@ struct Macro_Clusters
     unsigned int *group_of_micro_clusters;
     unsigned int n_micro_clusters;
     double micro_density_mean;
+    unsigned int active;
 };
 
 struct Micro_Cluster
@@ -98,6 +99,7 @@ struct Macro_Clusters *bfs_grouping(struct Macro_Clusters *macro_clusters_arr, s
             macro_clusters_arr[*number_of_macro_clusters].group_of_micro_clusters[wu] = micro_index;
         }
         macro_clusters_arr[*number_of_macro_clusters].group_of_micro_clusters[rear] = start_point;
+        macro_clusters_arr[*number_of_macro_clusters].active = 1;
         *number_of_macro_clusters = *number_of_macro_clusters + 1;
         /*---*/
 

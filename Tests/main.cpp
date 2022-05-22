@@ -206,6 +206,34 @@ unsigned int *filter_macros(struct Macro_Clusters *macro_clusters_arr, unsigned 
     return inactive_macros;
 }
 
+void dealloc_micros(struct Micro_Cluster *micro_clusters_arr, unsigned int *number_of_micro_clusters)
+{
+    if (*number_of_micro_clusters > 0)
+    {
+        for (unsigned int j = 0; j < *number_of_micro_clusters; j++)
+        {
+            free(micro_clusters_arr[j].center);
+        }
+        free(micro_clusters_arr);
+    }
+    return;
+}
+
+void dealloc_macros(struct Macro_Clusters *macro_clusters_arr, unsigned int *number_of_macro_clusters)
+{
+    if (*number_of_macro_clusters > 0)
+    {
+        for (unsigned int j = 0; j < *number_of_macro_clusters; j++)
+        {
+            free(macro_clusters_arr[j].group_of_micro_clusters);
+        }
+        free(macro_clusters_arr);
+        macro_clusters_arr = NULL;
+        *number_of_macro_clusters = 0;
+    }
+    return;
+}
+
 TEST_CASE("General test for gaussian distribution, centers: [1.0, 2.0], [2.0, 2.0]")
 {
     std::default_random_engine e(0.25);
@@ -262,17 +290,7 @@ TEST_CASE("General test for gaussian distribution, centers: [1.0, 2.0], [2.0, 2.
 
         if (i == rows - 1)
             write_macro_report(file_macro_before, macro_clusters_arr, micro_clusters_arr, number_of_macro_clusters, columns, inactive_macros);
-
-        if (*number_of_macro_clusters > 0)
-        {
-            for (unsigned int j = 0; j < *number_of_macro_clusters; j++)
-            {
-                free(macro_clusters_arr[j].group_of_micro_clusters);
-            }
-            free(macro_clusters_arr);
-            macro_clusters_arr = NULL;
-            *number_of_macro_clusters = 0;
-        }
+        dealloc_macros(macro_clusters_arr, number_of_macro_clusters);
         free(adj_node);
 
         adj_node = (unsigned int *)calloc(((*number_of_micro_clusters) * (*number_of_micro_clusters)), sizeof(unsigned int));
@@ -330,27 +348,11 @@ TEST_CASE("General test for gaussian distribution, centers: [1.0, 2.0], [2.0, 2.
             write_macro_report(file_macro_after, macro_clusters_arr, micro_clusters_arr, number_of_macro_clusters, columns, inactive_macros);
 
         free(inactive_macros);
-        if (*number_of_macro_clusters > 0)
-        {
-            for (unsigned int j = 0; j < *number_of_macro_clusters; j++)
-            {
-                free(macro_clusters_arr[j].group_of_micro_clusters);
-            }
-            free(macro_clusters_arr);
-            macro_clusters_arr = NULL;
-            *number_of_macro_clusters = 0;
-        }
+        dealloc_macros(macro_clusters_arr, number_of_macro_clusters);
         free(adj_node);
         free(test_2d);
     }
 
-    if (*number_of_micro_clusters > 0)
-    {
-        for (unsigned int j = 0; j < *number_of_micro_clusters; j++)
-        {
-            free(micro_clusters_arr[j].center);
-        }
-        free(micro_clusters_arr);
-    }
+    dealloc_micros(micro_clusters_arr, number_of_micro_clusters);
     REQUIRE(0 == 0);
 }
