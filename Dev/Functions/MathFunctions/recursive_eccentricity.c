@@ -13,6 +13,9 @@ void recursive_eccentricity(
     recursive_biased_sigma(sigma_current, mi_current, sample_current, matrix_index, columns);
     double dot_product = vec_dot_product(sample_current, mi_current, columns);
     double denominator = (double)(matrix_index + 1.0) * (*sigma_current);
-    *eccentricity = (1.0 / (matrix_index + 1.0)) + (dot_product / denominator);
+    if (denominator > 0.000001)
+    {
+        *eccentricity = (1.0 / (matrix_index + 1.0)) + (dot_product / denominator);
+    }
     return;
 }
