@@ -262,8 +262,8 @@ TEST_CASE("General test for gaussian distribution, centers: [1.0, 2.0], [2.0, 2.
 
     for (unsigned int i = 0; i < rows; i++)
     {
-        printf("Counter de cria %u\n", i);
-        double *test_2d = (double *)calloc(1, columns * sizeof(double));
+        printf("Counter %u\n", i);
+        double *test_2d = (double *)calloc(columns, sizeof(double));
         if (test_2d == NULL)
         {
             printf("Could not allocate memory \n");
