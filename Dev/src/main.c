@@ -31,6 +31,11 @@ void write_macro_report(char *file_name, struct Macro_Clusters *macro_clusters_a
             }
             sprintf(buffer, "[%u]|%u|: Micro Center: ", i, macro_clusters_arr[i].n_micro_clusters);
             unsigned int micro_index = macro_clusters_arr[i].group_of_micro_clusters[w];
+            if (micro_clusters_arr[micro_index].active == 0)
+            {
+                free(buffer);
+                continue;
+            }
             for (unsigned int j = 0; j < columns; j++)
             {
                 sprintf(buffer, "%s {%lf}", buffer, micro_clusters_arr[micro_index].center[j]);
