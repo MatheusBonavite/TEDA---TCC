@@ -19,3 +19,32 @@ void recursive_eccentricity(
     }
     return;
 }
+
+void recursive_eccentricity_guarded(
+    unsigned int matrix_index,
+    double *sample_current,
+    double *mi_current,
+    double *sigma_current,
+    double *eccentricity,
+    unsigned int columns,
+    double variance_limit)
+{
+    recursive_mean(mi_current, sample_current, matrix_index, columns);
+    recursive_biased_sigma(sigma_current, mi_current, sample_current, matrix_index, columns);
+    double dot_product = vec_dot_product(sample_current, mi_current, columns);
+    double denominator = (double)(matrix_index + 1.0) * (*sigma_current);
+    if (*sigma_current > variance_limit && matrix_index <= 3)
+    {
+        *eccentricity = 1000.0;
+        return;
+    }
+    if (*sigma_current <= 0.000001 && (matrix_index + 1) > 1)
+    {
+        *eccentricity = (double)(1.0 / (matrix_index + 1.0));
+    }
+    if (denominator > 0.000001)
+    {
+        *eccentricity = (1.0 / (matrix_index + 1.0)) + (dot_product / denominator);
+    }
+    return;
+}
