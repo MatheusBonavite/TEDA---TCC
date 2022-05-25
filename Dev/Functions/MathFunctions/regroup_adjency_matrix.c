@@ -29,7 +29,7 @@ void regroup_adjency_matrix(struct Macro_Clusters *macro_clusters_arr, struct Mi
             unsigned int micro_index = macro_clusters_arr[i].group_of_micro_clusters[j];
             double micro_density = (2.0 / micro_clusters_arr[micro_index].eccentricity);
             if (micro_density < macro_clusters_arr[i].micro_density_mean)
-                micro_clusters_arr[micro_index].active = 0;
+                micro_clusters_arr[micro_index].active = 1;
         }
     }
 
