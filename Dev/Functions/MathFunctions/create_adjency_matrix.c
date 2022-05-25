@@ -12,6 +12,7 @@ struct Micro_Cluster
     double variance;
     double eccentricity;
     unsigned int active;
+    double life;
 };
 void adjency_matrix(struct Micro_Cluster *micro_clusters_arr, unsigned int *adj_nodes, unsigned int number_of_micro_clusters, unsigned int columns)
 {

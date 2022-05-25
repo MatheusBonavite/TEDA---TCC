@@ -42,9 +42,6 @@ void recursive_eccentricity_guarded(
     {
         *eccentricity = (double)(1.0 / (matrix_index + 1.0));
     }
-    if (denominator > 0.000001)
-    {
-        *eccentricity = (1.0 / (matrix_index + 1.0)) + (dot_product / denominator);
-    }
+    *eccentricity = (1.0 / (matrix_index + 1.0)) + (dot_product / denominator);
     return;
 }

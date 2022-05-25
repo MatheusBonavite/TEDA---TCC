@@ -1,5 +1,5 @@
 import pandas as pd
-dfs = pd.read_csv('chameleon-ds4-clean.csv')
+dfs = pd.read_csv('chameleon-ds3-clean.csv')
 with open('readme.txt', 'w') as f:
     for index, row in dfs.iterrows():
         f.write(

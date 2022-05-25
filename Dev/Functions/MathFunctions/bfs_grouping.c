@@ -16,6 +16,7 @@ struct Micro_Cluster
     double variance;
     double eccentricity;
     unsigned int active;
+    double life;
 };
 void recursive_mean(double *mi_current, double *sample_current, unsigned int matrix_index, unsigned int columns);
 struct Macro_Clusters *bfs_grouping(struct Macro_Clusters *macro_clusters_arr, struct Micro_Cluster *micro_clusters_arr, unsigned int *adjency_matrix, unsigned int *number_of_macro_clusters, unsigned int number_of_micro_clusters, unsigned int disconsider_unitary_macro)
@@ -93,12 +94,18 @@ struct Macro_Clusters *bfs_grouping(struct Macro_Clusters *macro_clusters_arr, s
         /*---*/
 
         /* Push all the micro indexes to that macros group */
+        macro_clusters_arr[*number_of_macro_clusters].micro_density_mean = 0.0;
         for (unsigned int wu = 0; wu < rear; wu++)
         {
             unsigned int micro_index = queue[wu];
             macro_clusters_arr[*number_of_macro_clusters].group_of_micro_clusters[wu] = micro_index;
+            if (micro_clusters_arr[micro_index].eccentricity > 0.00001)
+                macro_clusters_arr[*number_of_macro_clusters].micro_density_mean += (2.0 / micro_clusters_arr[micro_index].eccentricity);
         }
         macro_clusters_arr[*number_of_macro_clusters].group_of_micro_clusters[rear] = start_point;
+        if (micro_clusters_arr[start_point].eccentricity > 0.00001)
+            macro_clusters_arr[*number_of_macro_clusters].micro_density_mean += (2.0 / micro_clusters_arr[start_point].eccentricity);
+        macro_clusters_arr[*number_of_macro_clusters].micro_density_mean = macro_clusters_arr[*number_of_macro_clusters].micro_density_mean / rear;
         macro_clusters_arr[*number_of_macro_clusters].active = 1;
         *number_of_macro_clusters = *number_of_macro_clusters + 1;
         /*---*/

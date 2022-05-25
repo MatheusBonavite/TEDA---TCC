@@ -8,6 +8,7 @@ struct Micro_Cluster
     double variance;
     double eccentricity;
     unsigned int active;
+    double life;
 };
 
 struct Macro_Clusters
@@ -46,7 +47,7 @@ double empirical_m(int k);
 double two_vec_euclidean_distance(double *a, double *b, unsigned int columns);
 void int_zero_matrix_initializer(unsigned int *matrix, unsigned int rows, unsigned int columns);
 struct Micro_Cluster *update_micro_cluster(struct Micro_Cluster *micro_clusters_arr, unsigned int *number_of_micro_clusters, double *sample_current, unsigned int k, unsigned int columns);
-struct Micro_Cluster *update_micro_cluster_guarded(struct Micro_Cluster *micro_clusters_arr, unsigned int *number_of_micro_clusters, double *sample_current, unsigned int k, unsigned int columns, double variance_limit);
+struct Micro_Cluster *update_micro_cluster_guarded(struct Micro_Cluster *micro_clusters_arr, unsigned int *number_of_micro_clusters, double *sample_current, unsigned int k, unsigned int columns, double variance_limit, double decay_value);
 void adjency_matrix(struct Micro_Cluster *micro_clusters_arr, unsigned int *adj_nodes, unsigned int number_of_micro_clusters, unsigned int columns);
 struct Macro_Clusters *bfs_grouping(struct Macro_Clusters *macro_clusters_arr, struct Micro_Cluster *micro_clusters_arr, unsigned int *adjency_matrix, unsigned int *number_of_macro_clusters, unsigned int number_of_micro_clusters, unsigned int disconsider_unitary_macro);
 unsigned int *int_matrix_allocation(unsigned int rows, unsigned int columns);
