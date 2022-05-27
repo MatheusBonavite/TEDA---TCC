@@ -203,7 +203,7 @@ struct Micro_Cluster *update_micro_cluster_guarded(struct Micro_Cluster *micro_c
     for (unsigned int i = 0; i < *number_of_micro_clusters; i++)
     {
         if (micro_clusters_arr[i].life <= 0)
-            micro_clusters_arr[i].active = 1;
+            micro_clusters_arr[i].active = 0;
     }
     return micro_clusters_arr;
 }
