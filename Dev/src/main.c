@@ -369,7 +369,7 @@ int main()
                 exit(1);
             }
             adjency_matrix(micro_clusters_arr, adj_node, *number_of_micro_clusters, columns);
-            macro_clusters_arr = bfs_grouping(macro_clusters_arr, micro_clusters_arr, adj_node, number_of_macro_clusters, *number_of_micro_clusters, 0);
+            macro_clusters_arr = bfs_grouping(macro_clusters_arr, micro_clusters_arr, adj_node, number_of_macro_clusters, *number_of_micro_clusters, 1);
             regroup_adjency_matrix(macro_clusters_arr, micro_clusters_arr, adj_node, *number_of_macro_clusters, *number_of_micro_clusters);
             write_macro_report(file_macro_before, macro_clusters_arr, micro_clusters_arr, number_of_macro_clusters, columns);
             dealloc_macros(macro_clusters_arr, number_of_macro_clusters);
