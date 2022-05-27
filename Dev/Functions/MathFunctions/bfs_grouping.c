@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#define EPS (1e-10)
 
 struct Macro_Clusters
 {
@@ -99,13 +100,13 @@ struct Macro_Clusters *bfs_grouping(struct Macro_Clusters *macro_clusters_arr, s
         {
             unsigned int micro_index = queue[wu];
             macro_clusters_arr[*number_of_macro_clusters].group_of_micro_clusters[wu] = micro_index;
-            if (micro_clusters_arr[micro_index].eccentricity > 0.00001)
+            if (micro_clusters_arr[micro_index].eccentricity > EPS)
                 macro_clusters_arr[*number_of_macro_clusters].micro_density_mean += (2.0 / micro_clusters_arr[micro_index].eccentricity);
         }
         macro_clusters_arr[*number_of_macro_clusters].group_of_micro_clusters[rear] = start_point;
-        if (micro_clusters_arr[start_point].eccentricity > 0.00001)
+        if (micro_clusters_arr[start_point].eccentricity > EPS)
             macro_clusters_arr[*number_of_macro_clusters].micro_density_mean += (2.0 / micro_clusters_arr[start_point].eccentricity);
-        macro_clusters_arr[*number_of_macro_clusters].micro_density_mean = macro_clusters_arr[*number_of_macro_clusters].micro_density_mean / rear;
+        macro_clusters_arr[*number_of_macro_clusters].micro_density_mean = macro_clusters_arr[*number_of_macro_clusters].micro_density_mean / macro_clusters_arr[*number_of_macro_clusters].n_micro_clusters;
         macro_clusters_arr[*number_of_macro_clusters].active = 1;
         *number_of_macro_clusters = *number_of_macro_clusters + 1;
         /*---*/
