@@ -40,7 +40,7 @@ void recursive_eccentricity_guarded(
         *eccentricity = 1000.0;
         return;
     }
-    if (*sigma_current <= EPS && (matrix_index + 1) > 1)
+    if (*sigma_current <= EPS && (matrix_index + 1.0) > 1)
     {
         *eccentricity = (double)(1.0 / (matrix_index + 1.0));
         return;

@@ -40,7 +40,7 @@ struct Micro_Cluster *allocate_initial_micro_cluster(unsigned int *number_of_mic
         }
         temp[0].variance = 0.0;
         temp[0].active = 1;
-        temp[0].eccentricity = 0.0;
+        temp[0].eccentricity = 1000.0;
         temp[0].life = 1.0;
         return temp;
     }
@@ -96,6 +96,8 @@ struct Micro_Cluster *update_micro_cluster(struct Micro_Cluster *micro_clusters_
                     micro_clusters_arr[i].center[j] = temp.center[j];
                 }
             }
+            else
+                micro_clusters_arr[i].eccentricity = temp.eccentricity;
             free(temp.center);
         }
         if (flag == 1)
@@ -116,7 +118,7 @@ struct Micro_Cluster *update_micro_cluster(struct Micro_Cluster *micro_clusters_
             }
             micro_clusters_arr[(*number_of_micro_clusters) - 1].active = 1;
             micro_clusters_arr[(*number_of_micro_clusters) - 1].variance = 0.0;
-            micro_clusters_arr[(*number_of_micro_clusters) - 1].eccentricity = 0.0;
+            micro_clusters_arr[(*number_of_micro_clusters) - 1].eccentricity = 1000.0;
         }
     }
     return micro_clusters_arr;
@@ -145,7 +147,7 @@ struct Micro_Cluster *update_micro_cluster_guarded(struct Micro_Cluster *micro_c
                 temp.center[j] = micro_clusters_arr[i].center[j];
             }
             recursive_eccentricity_guarded(temp.number_of_data_samples, sample_current, temp.center, &temp.variance, &temp.eccentricity, columns, variance_limit);
-            if ((temp.number_of_data_samples + 1.0) < 3)
+            if ((temp.number_of_data_samples + 1.0) < 3.0)
                 outlier = temp.variance > variance_limit;
             else
             {
@@ -169,7 +171,10 @@ struct Micro_Cluster *update_micro_cluster_guarded(struct Micro_Cluster *micro_c
                 micro_clusters_arr[i].life = 1.0;
             }
             else
+            {
+                micro_clusters_arr[i].eccentricity = temp.eccentricity;
                 micro_clusters_arr[i].life = micro_clusters_arr[i].life - (1 / decay_value);
+            }
 
             free(temp.center);
         }
@@ -191,7 +196,7 @@ struct Micro_Cluster *update_micro_cluster_guarded(struct Micro_Cluster *micro_c
             }
             micro_clusters_arr[(*number_of_micro_clusters) - 1].active = 1;
             micro_clusters_arr[(*number_of_micro_clusters) - 1].variance = 0.0;
-            micro_clusters_arr[(*number_of_micro_clusters) - 1].eccentricity = 0.0;
+            micro_clusters_arr[(*number_of_micro_clusters) - 1].eccentricity = 1000.0;
             micro_clusters_arr[(*number_of_micro_clusters) - 1].life = 1.0;
         }
     }
