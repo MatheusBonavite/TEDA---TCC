@@ -312,6 +312,9 @@ TEST_CASE("General test for gaussian distribution, centers: [1.0, 2.0], [2.0, 2.
         free(test_2d);
     }
 
+    /*Preventing Micro Leaks | Macro Leaks */
+    dealloc_macros(macro_clusters_arr, number_of_macro_clusters);
     dealloc_micros(micro_clusters_arr, number_of_micro_clusters);
+    /*********************/
     REQUIRE(0 == 0);
 }
