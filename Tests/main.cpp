@@ -237,6 +237,69 @@ void dealloc_macros(struct Macro_Clusters *macro_clusters_arr, unsigned int *num
     return;
 }
 
+void classify(
+    char *classified_samples_file_name,
+    double *sample,
+    struct Macro_Clusters *macro_clusters_arr,
+    struct Micro_Cluster *micro_clusters_arr,
+    unsigned int *number_of_macro_clusters,
+    unsigned int index,
+    unsigned int after_sample,
+    unsigned int columns)
+{
+    if (index > after_sample)
+    {
+        unsigned int which_macro = 0;
+        double weird_t_comparison = 0.0;
+        unsigned int active_macro_index = 0;
+
+        for (unsigned int index_macro = 0; index_macro < *number_of_macro_clusters; index_macro++)
+        {
+            if (macro_clusters_arr[index_macro].active == 0)
+                continue;
+            double weird_t = 0.0;
+            for (unsigned int index_micro = 0; index_micro < macro_clusters_arr[active_macro_index].n_micro_clusters; index_micro++)
+            {
+                if (micro_clusters_arr[index_micro].active == 0)
+                    continue;
+                double w_t = 1.0;
+                double typicality = 0.0;
+                double *new_eccentricity = (double *)calloc(1, sizeof(double));
+                double *new_variance = (double *)calloc(1, sizeof(double));
+                *new_variance = micro_clusters_arr[index_micro].variance;
+                double *new_center = (double *)calloc(columns, sizeof(double));
+                for (unsigned int w = 0; w < columns; w++)
+                    new_center[w] = micro_clusters_arr[index_micro].center[w];
+                recursive_eccentricity_guarded(
+                    micro_clusters_arr[index_micro].number_of_data_samples + 1,
+                    sample,
+                    new_center,
+                    new_variance,
+                    new_eccentricity,
+                    columns,
+                    VARIANCE_LIMIT);
+                double total_density = (macro_clusters_arr[active_macro_index].micro_density_mean * macro_clusters_arr[active_macro_index].n_micro_clusters);
+                typicality = (1.0 - (*new_eccentricity / 2.0));
+                if (total_density > 0.00001 && micro_clusters_arr[index_micro].eccentricity > 0.00001)
+                    w_t = ((2.0 / micro_clusters_arr[index_micro].eccentricity) / total_density);
+                weird_t += w_t * typicality;
+                free(new_eccentricity);
+                free(new_variance);
+                free(new_center);
+            }
+            printf("[%u][>%u<] weird_t ::: %lf density_mean ::: %lf n_micro ::: %u \n", index_macro, active_macro_index, weird_t, macro_clusters_arr[active_macro_index].micro_density_mean, macro_clusters_arr[active_macro_index].n_micro_clusters);
+            if (weird_t_comparison < weird_t)
+            {
+                which_macro = active_macro_index;
+                weird_t_comparison = weird_t;
+            }
+            active_macro_index++;
+        }
+        write_classified_samples(classified_samples_file_name, which_macro, sample);
+    }
+    return;
+}
+
 TEST_CASE("General test for gaussian distribution, centers: [1.0, 2.0], [2.0, 2.0]")
 {
     std::default_random_engine e(0.25);
@@ -290,6 +353,7 @@ TEST_CASE("General test for gaussian distribution, centers: [1.0, 2.0], [2.0, 2.
             adjency_matrix(micro_clusters_arr, adj_node, *number_of_micro_clusters, columns);
             macro_clusters_arr = bfs_grouping(macro_clusters_arr, micro_clusters_arr, adj_node, number_of_macro_clusters, *number_of_micro_clusters, 1);
             regroup_adjency_matrix(macro_clusters_arr, micro_clusters_arr, adj_node, *number_of_macro_clusters, *number_of_micro_clusters);
+            // regroup_adjency_matrix_per_micro(macro_clusters_arr, micro_clusters_arr, adj_node, *number_of_macro_clusters, *number_of_micro_clusters);
             write_macro_report(file_macro_before, macro_clusters_arr, micro_clusters_arr, number_of_macro_clusters, columns);
             dealloc_macros(macro_clusters_arr, number_of_macro_clusters);
             free(adj_node);

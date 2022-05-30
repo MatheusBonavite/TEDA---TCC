@@ -51,3 +51,4 @@ void recursive_eccentricity_guarded(
     double *eccentricity,
     unsigned int columns,
     double variance_limit);
+void regroup_adjency_matrix_per_micro(struct Macro_Clusters *macro_clusters_arr, struct Micro_Cluster *micro_clusters_arr, unsigned int *adjency_matrix, unsigned int n_macro_clusters, unsigned int n_micro_clusters);

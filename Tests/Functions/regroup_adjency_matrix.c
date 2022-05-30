@@ -35,3 +35,19 @@ void regroup_adjency_matrix(struct Macro_Clusters *macro_clusters_arr, struct Mi
 
     return;
 }
+
+void regroup_adjency_matrix_per_micro(struct Macro_Clusters *macro_clusters_arr, struct Micro_Cluster *micro_clusters_arr, unsigned int *adjency_matrix, unsigned int n_macro_clusters, unsigned int n_micro_clusters)
+{
+    double general_density_mean = 0.0;
+    for (unsigned int i = 0; i < n_micro_clusters; i++)
+        general_density_mean += (2.0 / micro_clusters_arr[i].eccentricity);
+    general_density_mean = general_density_mean / n_micro_clusters;
+
+    for (unsigned int i = 0; i < n_micro_clusters; i++)
+    {
+        double micro_density = (2.0 / micro_clusters_arr[i].eccentricity);
+        if (micro_density < general_density_mean)
+            micro_clusters_arr[i].active = 0;
+    }
+    return;
+}
