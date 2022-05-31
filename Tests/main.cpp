@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "./header/global_header.h"
-#define VARIANCE_LIMIT 0.001
+#define VARIANCE_LIMIT 0.001015
 #define DECAY_VALUE 4000
 #define EPS (1e-10)
 
@@ -36,7 +36,7 @@ void write_macro_report(char *file_name, struct Macro_Clusters *macro_clusters_a
                 sprintf(buffer, "%s {%lf}", buffer, micro_clusters_arr[micro_index].center[j]);
             }
             sprintf(buffer, "%s Micro Radius: (%lf)", buffer, empirical_m(micro_clusters_arr[micro_index].number_of_data_samples) * sqrt(micro_clusters_arr[micro_index].variance));
-            sprintf(buffer, "%s Micro Variance: %lf", buffer, sqrt(micro_clusters_arr[micro_index].variance));
+            sprintf(buffer, "%s Micro Variance: %lf", buffer, micro_clusters_arr[micro_index].variance);
             sprintf(buffer, "%s Micro Eccentricity: %lf", buffer, micro_clusters_arr[micro_index].eccentricity);
             sprintf(buffer, "%s Micro Density: %lf", buffer, 2.0 / micro_clusters_arr[micro_index].eccentricity);
             sprintf(buffer, "%s Micro Density Mean: %lf", buffer, macro_clusters_arr[i].micro_density_mean);
@@ -202,7 +202,7 @@ void filter_macros(struct Macro_Clusters *macro_clusters_arr, unsigned int macro
     amount_of_micros_mean = amount_of_micros_mean / macros_amount;
     for (unsigned int i = 0; i < macros_amount; i++)
     {
-        if (macro_clusters_arr[i].n_micro_clusters < (0.25 * amount_of_micros_mean))
+        if (macro_clusters_arr[i].n_micro_clusters < (0.10 * amount_of_micros_mean))
             macro_clusters_arr[i].active = 0;
         else
             macro_clusters_arr[i].active = 1;
@@ -254,12 +254,14 @@ void classify(
     double weird_t_comparison = 0.0;
     for (unsigned int index_macro = 0; index_macro < *number_of_macro_clusters; index_macro++)
     {
+        if (macro_clusters_arr[index_macro].active == 0)
+            continue;
         double weird_t = 0.0;
         double total_density = (macro_clusters_arr[active_macro_index].micro_density_mean * macro_clusters_arr[active_macro_index].n_micro_clusters);
         for (unsigned int i = 0; i < macro_clusters_arr[active_macro_index].n_micro_clusters; i++)
         {
             unsigned int index_micro = macro_clusters_arr[active_macro_index].group_of_micro_clusters[i];
-            if (micro_clusters_arr[index_micro].number_of_data_samples <= 5)
+            if (micro_clusters_arr[index_micro].number_of_data_samples <= 2)
                 continue;
 
             double *new_eccentricity = (double *)calloc(1, sizeof(double));
@@ -279,6 +281,65 @@ void classify(
             double tipicality = (double)(1.0 - (*new_eccentricity)) / ((double)micro_clusters_arr[index_micro].number_of_data_samples - (double)1.0);
             double w_t = ((2.0 / (*new_eccentricity)) / total_density);
             weird_t += (w_t * tipicality);
+            free(new_eccentricity);
+            free(new_variance);
+            free(new_center);
+        }
+        // printf("[%u] weird_t ::: %lf | weird_t_comparison ::: %lf \n", active_macro_index, weird_t, weird_t_comparison);
+        if (weird_t_comparison < weird_t)
+        {
+            which_macro = active_macro_index;
+            weird_t_comparison = weird_t;
+        }
+        active_macro_index++;
+    }
+    write_classified_samples(classified_samples_file_name, which_macro, sample);
+    return;
+}
+
+void new_classification(
+    char *classified_samples_file_name,
+    double *sample,
+    struct Macro_Clusters *macro_clusters_arr,
+    struct Micro_Cluster *micro_clusters_arr,
+    unsigned int *number_of_macro_clusters,
+    unsigned int index,
+    unsigned int after_sample,
+    unsigned int columns)
+{
+
+    unsigned int active_macro_index = 0;
+    unsigned int which_macro = 0;
+    double weird_t_comparison = 0.0;
+
+    for (unsigned int index_macro = 0; index_macro < *number_of_macro_clusters; index_macro++)
+    {
+        double weird_t = 0.0;
+        double total_density = (macro_clusters_arr[active_macro_index].micro_density_mean * macro_clusters_arr[active_macro_index].n_micro_clusters);
+        for (unsigned int i = 0; i < macro_clusters_arr[active_macro_index].n_micro_clusters; i++)
+        {
+            unsigned int index_micro = macro_clusters_arr[active_macro_index].group_of_micro_clusters[i];
+            if (micro_clusters_arr[index_micro].number_of_data_samples <= 2)
+                continue;
+
+            double *new_eccentricity = (double *)calloc(1, sizeof(double));
+            double *new_variance = (double *)calloc(1, sizeof(double));
+            *new_variance = micro_clusters_arr[index_micro].variance;
+            double *new_center = (double *)calloc(columns, sizeof(double));
+            for (unsigned int w = 0; w < columns; w++)
+                new_center[w] = micro_clusters_arr[index_micro].center[w];
+            recursive_eccentricity_guarded(
+                micro_clusters_arr[index_micro].number_of_data_samples,
+                sample,
+                new_center,
+                new_variance,
+                new_eccentricity,
+                columns,
+                VARIANCE_LIMIT);
+            double center_distance = two_vec_euclidean_distance(micro_clusters_arr[index_micro].center, new_center, columns);
+            double tipicality = (double)(1.0 - (*new_eccentricity)) / ((double)micro_clusters_arr[index_micro].number_of_data_samples - (double)2.0);
+            double w_t = ((2.0 / (*new_eccentricity)) / total_density);
+            weird_t += (w_t * tipicality * (1.0 / center_distance));
             free(new_eccentricity);
             free(new_variance);
             free(new_center);
@@ -373,7 +434,7 @@ TEST_CASE("General test for gaussian distribution, centers: [1.0, 2.0], [2.0, 2.
     /*Offline mode classification*/
     for (unsigned int i = 0; i < rows; i++)
     {
-        printf("Counter Classification %u\n", i);
+        // printf("Counter Classification %u\n", i);
         double *test_2d = (double *)calloc(columns, sizeof(double));
         if (test_2d == NULL)
         {
