@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "./header/global_header.h"
-#define VARIANCE_LIMIT 0.001015
+#define VARIANCE_LIMIT 0.001
 #define DECAY_VALUE 4000
 #define EPS (1e-10)
 
