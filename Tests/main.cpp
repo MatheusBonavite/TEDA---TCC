@@ -255,15 +255,13 @@ void classify(
     for (unsigned int index_macro = 0; index_macro < *number_of_macro_clusters; index_macro++)
     {
         double weird_t = 0.0;
-        if (macro_clusters_arr[index_macro].n_micro_clusters <= 5)
-            continue;
         double total_density = (macro_clusters_arr[active_macro_index].micro_density_mean * macro_clusters_arr[active_macro_index].n_micro_clusters);
-        printf("total_density ::: %lf \n", total_density);
-        for (unsigned int index_micro = 0; index_micro < macro_clusters_arr[active_macro_index].n_micro_clusters; index_micro++)
+        for (unsigned int i = 0; i < macro_clusters_arr[active_macro_index].n_micro_clusters; i++)
         {
-            if (micro_clusters_arr[index_micro].number_of_data_samples < 2)
+            unsigned int index_micro = macro_clusters_arr[active_macro_index].group_of_micro_clusters[i];
+            if (micro_clusters_arr[index_micro].number_of_data_samples <= 5)
                 continue;
-            double w_t = 0.0;
+
             double *new_eccentricity = (double *)calloc(1, sizeof(double));
             double *new_variance = (double *)calloc(1, sizeof(double));
             *new_variance = micro_clusters_arr[index_micro].variance;
@@ -278,21 +276,14 @@ void classify(
                 new_eccentricity,
                 columns,
                 VARIANCE_LIMIT);
-            printf("new variance ::: %lf \n", *new_variance);
-            if (fabs(*new_eccentricity - 1000.0) <= EPS || (*new_eccentricity) <= 0.0)
-            {
-                free(new_eccentricity);
-                free(new_variance);
-                free(new_center);
-                continue;
-            }
-            w_t = ((2.0 / micro_clusters_arr[index_micro].eccentricity) / total_density);
-            weird_t = weird_t + (w_t * (1.0 / (*new_variance)));
+            double tipicality = (double)(1.0 - (*new_eccentricity)) / ((double)micro_clusters_arr[index_micro].number_of_data_samples - (double)1.0);
+            double w_t = ((2.0 / (*new_eccentricity)) / total_density);
+            weird_t += (w_t * tipicality);
             free(new_eccentricity);
             free(new_variance);
             free(new_center);
         }
-        printf("[%u] weird_t ::: %lf | weird_t_comparison ::: %lf \n", active_macro_index, weird_t, weird_t_comparison);
+        // printf("[%u] weird_t ::: %lf | weird_t_comparison ::: %lf \n", active_macro_index, weird_t, weird_t_comparison);
         if (weird_t_comparison < weird_t)
         {
             which_macro = active_macro_index;

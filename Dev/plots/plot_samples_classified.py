@@ -14,11 +14,8 @@ def value_for_color(value):
         return hexadecimal[0]
 
 fig, ax = plt.subplots()
-ax.set_xlim((-2, 2))
-ax.set_ylim((-2, 2))
-
-
-ax.grid()
+ax.set_xlim((0, 1))
+ax.set_ylim((0, 1))
 
 filename = "./classified_samples.txt"
 filehandle = open(filename, 'r')

@@ -147,6 +147,8 @@ struct Micro_Cluster *update_micro_cluster_guarded(struct Micro_Cluster *micro_c
                 temp.center[j] = micro_clusters_arr[i].center[j];
             }
             recursive_eccentricity_guarded(temp.number_of_data_samples, sample_current, temp.center, &temp.variance, &temp.eccentricity, columns, variance_limit);
+            // printf("[%u] excentricidade ::: %lf \n", i, temp.eccentricity);
+            // printf("[%u] new_variance ::: %lf E variance ::: %lf \n", i, temp.variance, micro_clusters_arr[i].variance);
             if ((temp.number_of_data_samples + 1.0) < 3.0)
                 outlier = temp.variance > variance_limit;
             else
