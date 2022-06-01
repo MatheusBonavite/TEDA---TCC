@@ -8,7 +8,7 @@ typedef SSIZE_T ssize_t;
 #include <math.h>
 #include <string.h>
 #include "../Header/GlobalHeader.h"
-#define VARIANCE_LIMIT 0.0005
+#define VARIANCE_LIMIT 0.0015
 #define DECAY_VALUE 4000
 #define EPS (1e-10)
 
@@ -308,7 +308,7 @@ void classify(
 int main()
 {
     /*Definition of some file names*/
-    char *file_to_grab = "./InfoSource/readme2.txt";
+    char *file_to_grab = "./InfoSource/readme.txt";
     char *samples_file_name = "./plots/samples.txt";
     char *classified_samples_file_name = "./plots/classified_samples.txt";
     char *file_micro_name = "./plots/micro.txt";
@@ -347,6 +347,8 @@ int main()
     double *x_features = (double *)calloc(rows * columns, sizeof(double));
     retrieve_feature_from_table(x_features, rows, columns, db);
 
+    // double r_factor[6] = {1.15, 1.25, 1.5, 1.75, 2.0, 2.25};
+
     for (unsigned int i = 0; i < rows; i++)
     {
         printf("Counter %u\n", i);
@@ -366,7 +368,7 @@ int main()
                 printf("Could not allocate memory \n");
                 exit(1);
             }
-            adjency_matrix(micro_clusters_arr, adj_node, *number_of_micro_clusters, columns);
+            adjency_matrix_diff(micro_clusters_arr, adj_node, *number_of_micro_clusters, columns, 1.65);
             macro_clusters_arr = bfs_grouping(macro_clusters_arr, micro_clusters_arr, adj_node, number_of_macro_clusters, *number_of_micro_clusters, 1);
             regroup_adjency_matrix(macro_clusters_arr, micro_clusters_arr, adj_node, *number_of_macro_clusters, *number_of_micro_clusters);
             write_macro_report(file_macro_before, macro_clusters_arr, micro_clusters_arr, number_of_macro_clusters, columns);
@@ -379,7 +381,7 @@ int main()
                 printf("Could not allocate memory \n");
                 exit(1);
             }
-            adjency_matrix(micro_clusters_arr, adj_node, *number_of_micro_clusters, columns);
+            adjency_matrix_diff(micro_clusters_arr, adj_node, *number_of_micro_clusters, columns, 1.65);
             macro_clusters_arr = bfs_grouping(macro_clusters_arr, micro_clusters_arr, adj_node, number_of_macro_clusters, *number_of_micro_clusters, 1);
             // filter_macros(macro_clusters_arr, *number_of_macro_clusters);
             write_macro_report(file_macro_after, macro_clusters_arr, micro_clusters_arr, number_of_macro_clusters, columns);

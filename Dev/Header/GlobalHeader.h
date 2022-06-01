@@ -61,4 +61,4 @@ void recursive_eccentricity_guarded(
     double *eccentricity,
     unsigned int columns,
     double variance_limit);
-void adjency_matrix_diff(struct Micro_Cluster *micro_clusters_arr, unsigned int *adj_nodes, unsigned int number_of_micro_clusters, unsigned int columns);
+void adjency_matrix_diff(struct Micro_Cluster *micro_clusters_arr, unsigned int *adj_nodes, unsigned int number_of_micro_clusters, unsigned int columns, double r_factor);
