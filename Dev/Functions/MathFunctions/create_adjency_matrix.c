@@ -32,3 +32,22 @@ void adjency_matrix(struct Micro_Cluster *micro_clusters_arr, unsigned int *adj_
     }
     return;
 }
+
+void adjency_matrix_diff(struct Micro_Cluster *micro_clusters_arr, unsigned int *adj_nodes, unsigned int number_of_micro_clusters, unsigned int columns)
+{
+    for (unsigned int i = 0; i < number_of_micro_clusters; i++)
+    {
+        for (unsigned int j = 0; j < number_of_micro_clusters; j++)
+        {
+            if (j <= i)
+                continue;
+            double radius_i = empirical_m(micro_clusters_arr[i].number_of_data_samples) * sqrt(micro_clusters_arr[i].variance);
+            double radius_j = empirical_m(micro_clusters_arr[j].number_of_data_samples) * sqrt(micro_clusters_arr[j].variance);
+            double dist_centers = two_vec_euclidean_distance(micro_clusters_arr[i].center, micro_clusters_arr[j].center, columns);
+            unsigned int resp_condition = dist_centers < (radius_i + radius_j);
+            adj_nodes[(number_of_micro_clusters * i) + j] = resp_condition;
+            adj_nodes[(number_of_micro_clusters * j) + i] = resp_condition;
+        }
+    }
+    return;
+}

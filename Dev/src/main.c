@@ -8,7 +8,7 @@ typedef SSIZE_T ssize_t;
 #include <math.h>
 #include <string.h>
 #include "../Header/GlobalHeader.h"
-#define VARIANCE_LIMIT 0.0007
+#define VARIANCE_LIMIT 0.0005
 #define DECAY_VALUE 4000
 #define EPS (1e-10)
 
@@ -308,6 +308,7 @@ void classify(
 int main()
 {
     /*Definition of some file names*/
+    char *file_to_grab = "./InfoSource/readme2.txt";
     char *samples_file_name = "./plots/samples.txt";
     char *classified_samples_file_name = "./plots/classified_samples.txt";
     char *file_micro_name = "./plots/micro.txt";
@@ -330,7 +331,7 @@ int main()
     /*End - Creating TABLE!*/
 
     /*Begin - Insert entries into TABLE!*/
-    insert_entries_in_table(err, db);
+    insert_entries_in_table(err, file_to_grab, db);
     /*End - Insert entries into TABLE!*/
 
     /*Begin - Retrieving amount of data rows from the table */

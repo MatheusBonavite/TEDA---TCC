@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-
 struct Macro_Clusters
 {
     unsigned int *group_of_micro_clusters;

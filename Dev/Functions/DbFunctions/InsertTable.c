@@ -8,15 +8,15 @@ typedef SSIZE_T ssize_t;
 #include <math.h>
 #include "../../sqlite/sqlite3.h"
 
-void insert_entries_in_table(char *err, sqlite3 *db)
+void insert_entries_in_table(char *err, char *file_name, sqlite3 *db)
 {
-    //Code for reading lines: https://stackoverflow.com/questions/3501338/c-read-file-line-by-line
+    // Code for reading lines: https://stackoverflow.com/questions/3501338/c-read-file-line-by-line
 
     FILE *fp;
     char *line = NULL;
     size_t len = 0;
     ssize_t read;
-    fp = fopen("./InfoSource/readme.txt", "r");
+    fp = fopen(file_name, "r");
     if (fp == NULL)
         exit(EXIT_FAILURE);
 

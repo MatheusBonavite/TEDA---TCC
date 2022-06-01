@@ -20,12 +20,12 @@ struct Macro_Clusters
 };
 
 /* DbFunctions Folder */
-sqlite3 *either_exists_or_create_table(char *, sqlite3 *);       // CreateTable.c
-unsigned int describe_features(sqlite3 *);                       // DescribeFeatures.c
-int get_amount_of_data(sqlite3 *);                               // GetAmountOfData.c
-void insert_entries_in_table(char *, sqlite3 *);                 // InsertTable.c
-void retrieve_feature_from_table(double *, int, int, sqlite3 *); // RetrieveFeature.c
-void retrieve_label_from_table(int *, int, sqlite3 *);           // RetrieveLabel.c
+sqlite3 *either_exists_or_create_table(char *, sqlite3 *);             // CreateTable.c
+unsigned int describe_features(sqlite3 *);                             // DescribeFeatures.c
+int get_amount_of_data(sqlite3 *);                                     // GetAmountOfData.c
+void insert_entries_in_table(char *err, char *file_name, sqlite3 *db); // InsertTable.c
+void retrieve_feature_from_table(double *, int, int, sqlite3 *);       // RetrieveFeature.c
+void retrieve_label_from_table(int *, int, sqlite3 *);                 // RetrieveLabel.c
 /* DbFunctions Folder */
 
 /*MathFunctions Folder*/
@@ -61,3 +61,4 @@ void recursive_eccentricity_guarded(
     double *eccentricity,
     unsigned int columns,
     double variance_limit);
+void adjency_matrix_diff(struct Micro_Cluster *micro_clusters_arr, unsigned int *adj_nodes, unsigned int number_of_micro_clusters, unsigned int columns);
