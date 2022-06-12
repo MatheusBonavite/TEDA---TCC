@@ -59,7 +59,7 @@ void write_macro_report(char *file_name, struct Macro_Clusters *macro_clusters_a
     return;
 }
 
-void write_samples(char *file_name, double *test_2d)
+void write_samples(char *file_name, double *test_2d, unsigned int clust)
 {
     FILE *file_samples = fopen(file_name, "a+");
     if (file_samples == NULL)
@@ -68,8 +68,8 @@ void write_samples(char *file_name, double *test_2d)
         return;
     }
     int file_i = 0;
-    char *buffer = (char *)calloc(50, sizeof(char));
-    sprintf(buffer, "%lf %lf \n", test_2d[0], test_2d[1]);
+    char *buffer = (char *)calloc(75, sizeof(char));
+    sprintf(buffer, "%lf %lf %u \n", test_2d[0], test_2d[1], clust);
     while (file_i < strlen(buffer))
     {
         int result = fputc(buffer[file_i], file_samples);
@@ -395,58 +395,58 @@ TEST_CASE("General test for gaussian distribution, centers: [1.0, 2.0], [2.0, 2.
         test_2d[1] = centers[center_index][1] + distN(e);
 
         micro_clusters_arr = update_micro_cluster_guarded(micro_clusters_arr, number_of_micro_clusters, test_2d, i, columns, VARIANCE_LIMIT, DECAY_VALUE);
-        write_samples(samples_file_name, test_2d);
+        write_samples(samples_file_name, test_2d, center_index);
 
-        if (i == rows - 1)
-        {
-            /*Creating Macros After*/
-            unsigned int *adj_node = (unsigned int *)calloc(((*number_of_micro_clusters) * (*number_of_micro_clusters)), sizeof(unsigned int));
-            if (adj_node == NULL)
-            {
-                printf("Could not allocate memory \n");
-                exit(1);
-            }
-            adjency_matrix(micro_clusters_arr, adj_node, *number_of_micro_clusters, columns);
-            macro_clusters_arr = bfs_grouping(macro_clusters_arr, micro_clusters_arr, adj_node, number_of_macro_clusters, *number_of_micro_clusters, 1);
-            regroup_adjency_matrix(macro_clusters_arr, micro_clusters_arr, adj_node, *number_of_macro_clusters, *number_of_micro_clusters);
-            // regroup_adjency_matrix_per_micro(macro_clusters_arr, micro_clusters_arr, adj_node, *number_of_macro_clusters, *number_of_micro_clusters);
-            write_macro_report(file_macro_before, macro_clusters_arr, micro_clusters_arr, number_of_macro_clusters, columns);
-            dealloc_macros(macro_clusters_arr, number_of_macro_clusters);
-            free(adj_node);
+        // if (i == rows - 1)
+        // {
+        //     /*Creating Macros After*/
+        //     unsigned int *adj_node = (unsigned int *)calloc(((*number_of_micro_clusters) * (*number_of_micro_clusters)), sizeof(unsigned int));
+        //     if (adj_node == NULL)
+        //     {
+        //         printf("Could not allocate memory \n");
+        //         exit(1);
+        //     }
+        //     adjency_matrix(micro_clusters_arr, adj_node, *number_of_micro_clusters, columns);
+        //     macro_clusters_arr = bfs_grouping(macro_clusters_arr, micro_clusters_arr, adj_node, number_of_macro_clusters, *number_of_micro_clusters, 1);
+        //     regroup_adjency_matrix(macro_clusters_arr, micro_clusters_arr, adj_node, *number_of_macro_clusters, *number_of_micro_clusters);
+        //     // regroup_adjency_matrix_per_micro(macro_clusters_arr, micro_clusters_arr, adj_node, *number_of_macro_clusters, *number_of_micro_clusters);
+        //     write_macro_report(file_macro_before, macro_clusters_arr, micro_clusters_arr, number_of_macro_clusters, columns);
+        //     dealloc_macros(macro_clusters_arr, number_of_macro_clusters);
+        //     free(adj_node);
 
-            adj_node = (unsigned int *)calloc(((*number_of_micro_clusters) * (*number_of_micro_clusters)), sizeof(unsigned int));
-            if (adj_node == NULL)
-            {
-                printf("Could not allocate memory \n");
-                exit(1);
-            }
-            adjency_matrix(micro_clusters_arr, adj_node, *number_of_micro_clusters, columns);
-            macro_clusters_arr = bfs_grouping(macro_clusters_arr, micro_clusters_arr, adj_node, number_of_macro_clusters, *number_of_micro_clusters, 1);
-            // filter_macros(macro_clusters_arr, *number_of_macro_clusters);
-            write_macro_report(file_macro_after, macro_clusters_arr, micro_clusters_arr, number_of_macro_clusters, columns);
+        //     adj_node = (unsigned int *)calloc(((*number_of_micro_clusters) * (*number_of_micro_clusters)), sizeof(unsigned int));
+        //     if (adj_node == NULL)
+        //     {
+        //         printf("Could not allocate memory \n");
+        //         exit(1);
+        //     }
+        //     adjency_matrix(micro_clusters_arr, adj_node, *number_of_micro_clusters, columns);
+        //     macro_clusters_arr = bfs_grouping(macro_clusters_arr, micro_clusters_arr, adj_node, number_of_macro_clusters, *number_of_micro_clusters, 1);
+        //     // filter_macros(macro_clusters_arr, *number_of_macro_clusters);
+        //     write_macro_report(file_macro_after, macro_clusters_arr, micro_clusters_arr, number_of_macro_clusters, columns);
 
-            free(adj_node);
-            /*********************/
-        }
+        //     free(adj_node);
+        //     /*********************/
+        // }
         // classify(classified_samples_file_name, t_2_d, macro_clusters_arr, micro_clusters_arr, number_of_macro_clusters, i, rows-1, columns);
         free(test_2d);
     }
     /*Offline mode classification*/
-    for (unsigned int i = 0; i < rows; i++)
-    {
-        // printf("Counter Classification %u\n", i);
-        double *test_2d = (double *)calloc(columns, sizeof(double));
-        if (test_2d == NULL)
-        {
-            printf("Could not allocate memory \n");
-            exit(1);
-        }
-        unsigned int center_index = rand() % 3;
-        test_2d[0] = centers[center_index][0] + distN(e);
-        test_2d[1] = centers[center_index][1] + distN(e);
-        classify(classified_samples_file_name, test_2d, macro_clusters_arr, micro_clusters_arr, number_of_macro_clusters, i, rows - 1, columns);
-        free(test_2d);
-    }
+    // for (unsigned int i = 0; i < rows; i++)
+    // {
+    //     // printf("Counter Classification %u\n", i);
+    //     double *test_2d = (double *)calloc(columns, sizeof(double));
+    //     if (test_2d == NULL)
+    //     {
+    //         printf("Could not allocate memory \n");
+    //         exit(1);
+    //     }
+    //     unsigned int center_index = rand() % 3;
+    //     test_2d[0] = centers[center_index][0] + distN(e);
+    //     test_2d[1] = centers[center_index][1] + distN(e);
+    //     classify(classified_samples_file_name, test_2d, macro_clusters_arr, micro_clusters_arr, number_of_macro_clusters, i, rows - 1, columns);
+    //     free(test_2d);
+    // }
     /******/
     /*Preventing Micro Leaks | Macro Leaks */
     dealloc_macros(macro_clusters_arr, number_of_macro_clusters);

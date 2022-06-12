@@ -17,7 +17,7 @@ fig, ax = plt.subplots()
 ax.set_xlim((0, 1))
 ax.set_ylim((0, 1))
 
-filename = "./classified_samples.txt"
+filename = "./classified_samples6.txt"
 filehandle = open(filename, 'r')
 while True:
     line = filehandle.readline()
@@ -29,5 +29,5 @@ while True:
     print(first_coordinate, second_coordinate, third_coordinate)
     ax.scatter(float(first_coordinate), float(second_coordinate), color=value_for_color(third_coordinate), s=(120./fig.dpi))
     
-fig.savefig('classified_samples.png')
+fig.savefig('classified_samples6.png')
 filehandle.close()

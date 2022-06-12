@@ -8,10 +8,10 @@ typedef SSIZE_T ssize_t;
 #include <math.h>
 #include "../../sqlite/sqlite3.h"
 
-sqlite3 *either_exists_or_create_table(char *err, sqlite3 *db)
+sqlite3 *either_exists_or_create_table(char *file_name, char *err, sqlite3 *db)
 {
 
-    sqlite3_open("myDBTest.sqlite", &db);
+    sqlite3_open(file_name, &db);
     int response_sql_exec = sqlite3_exec(
         db,
         "CREATE TABLE "
