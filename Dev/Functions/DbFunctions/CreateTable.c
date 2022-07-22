@@ -30,11 +30,11 @@ sqlite3 *either_exists_or_create_table(char *file_name, char *err, sqlite3 *db)
         printf("%s", err);
         printf("\n");
     }
-    else
-    {
-        printf("OK! Table creation completed, or table already exists!");
-        printf("\n");
-    }
+    // else
+    //{
+    //     printf("OK! Table creation completed, or table already exists!");
+    //     printf("\n");
+    // }
 
     return db;
 }

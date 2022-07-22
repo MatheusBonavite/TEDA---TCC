@@ -9,7 +9,7 @@ typedef SSIZE_T ssize_t;
 #include <string.h>
 #include "../Header/GlobalHeader.h"
 #define VARIANCE_LIMIT 0.0015
-#define DECAY_VALUE 3000
+#define DECAY_VALUE 4000
 #define EPS (1e-10)
 
 void write_macro_report(char *file_name, struct Macro_Clusters *macro_clusters_arr, struct Micro_Cluster *micro_clusters_arr, unsigned int *number_of_macro_clusters, unsigned int columns)
@@ -93,7 +93,7 @@ void write_samples(char *file_name, double *test_2d)
     fclose(file_samples);
 }
 
-void write_classified_samples(char *file_name, unsigned int class_value, double *test_2d)
+void write_classified_samples(char *file_name, unsigned int class_value, double *test_2d, unsigned int columns)
 {
     FILE *file_samples = fopen(file_name, "a+");
     if (file_samples == NULL)
@@ -102,8 +102,12 @@ void write_classified_samples(char *file_name, unsigned int class_value, double 
         return;
     }
     int file_i = 0;
-    char *buffer = (char *)calloc(50, sizeof(char));
-    sprintf(buffer, "%u %lf %lf \n", class_value, test_2d[0], test_2d[1]);
+    char *buffer = (char *)calloc(100, sizeof(char));
+    sprintf(buffer, "%u ", class_value);
+    for (unsigned int i = 0; i < columns; i++)
+        sprintf(buffer, "%s %lf ", buffer, test_2d[i]);
+    sprintf(buffer, "%s\n", buffer);
+
     while (file_i < strlen(buffer))
     {
         int result = fputc(buffer[file_i], file_samples);
@@ -302,129 +306,85 @@ void classify(
         }
         active_macro_index++;
     }
-    write_classified_samples(classified_samples_file_name, which_macro, sample);
+    write_classified_samples(classified_samples_file_name, which_macro, sample, columns);
     return;
 }
 
 int main()
 {
 
-    for (unsigned int std_value_d = 0; std_value_d < 20; std_value_d++)
+    /*Definition of some file names*/
+    char file_to_grab[125];
+    snprintf(file_to_grab, 125, "./InfoSource/std_7/std_0.txt");
+    char db_name[125];
+    snprintf(db_name, 125, "myDBTest.sqlite");
+
+    // char *file_to_grab = "./InfoSource/std_1.txt";
+    char *samples_file_name = "./plots/samples.txt";
+    char *file_micro_name = "./plots/micro.txt";
+    char *file_macro_before = "./plots/file_macro_before.txt";
+    char *file_macro_after = "./plots/file_macro_after.txt";
+    /*********************************/
+    /*To have a registry on the TABLE!*/
+    struct Micro_Cluster *micro_clusters_arr;
+    struct Macro_Clusters *macro_clusters_arr;
+    unsigned int n_micro = 0;
+    unsigned int n_macro = 0;
+    unsigned int *number_of_micro_clusters = &n_micro;
+    unsigned int *number_of_macro_clusters = &n_macro;
+    /*********************************/
+
+    unsigned int rows = 50000;
+    unsigned int columns = 1;
+    unsigned int the_value = 0;
+    char classified_samples_file_name[55];
+    snprintf(classified_samples_file_name, 55, "./samples_test/classified_samples.txt");
+
+    for (unsigned int i = 0; i < rows; i++)
     {
-        /*Definition of some file names*/
-        char file_to_grab[125];
-        snprintf(file_to_grab, 125, "./InfoSource/std_3/std_%d.txt", std_value_d);
-        char db_name[125];
-        snprintf(db_name, 125, "myDBTest_%d.sqlite", std_value_d);
-
-        // char *file_to_grab = "./InfoSource/std_1.txt";
-        char *samples_file_name = "./plots/samples.txt";
-        char *file_micro_name = "./plots/micro.txt";
-        char *file_macro_before = "./plots/file_macro_before.txt";
-        char *file_macro_after = "./plots/file_macro_after.txt";
-        /*********************************/
-        /*To have a registry on the TABLE!*/
-        char *err;
-        sqlite3 *db;
-        struct Micro_Cluster *micro_clusters_arr;
-        struct Macro_Clusters *macro_clusters_arr;
-        unsigned int n_micro = 0;
-        unsigned int n_macro = 0;
-        unsigned int *number_of_micro_clusters = &n_micro;
-        unsigned int *number_of_macro_clusters = &n_macro;
-        /*********************************/
-
-        /*Begin - Creating TABLE!*/
-        db = either_exists_or_create_table(db_name, err, db);
-        /*End - Creating TABLE!*/
-
-        /*Begin - Insert entries into TABLE!*/
-        insert_entries_in_table(err, file_to_grab, db);
-        /*End - Insert entries into TABLE!*/
-
-        /*Begin - Retrieving amount of data rows from the table */
-        int rows = get_amount_of_data(db);
-        printf("\n Amount of data: %i", rows);
-        /*End - Retrieving amount of data rows from the table */
-
-        /*Begin - Retrieving amount of data columns from the table (only features) */
-        unsigned int columns = describe_features(db);
-        printf("\n Amount of data (columns): %u\n", columns);
-        /*End - Retrieving amount of data columns from the table (only features) */
-
-        double *x_features = (double *)calloc(rows * columns, sizeof(double));
-        retrieve_feature_from_table(x_features, rows, columns, db);
-        unsigned int the_value = 0;
-        for (double r_factor = 1.0; r_factor < 5.0; r_factor += 0.25)
+        double *t_2_d = (double *)calloc(columns, sizeof(double));
+        for (unsigned int wu = 0; wu < columns; wu++)
+            t_2_d[wu] = ((float)rand() / (float)(RAND_MAX));
+        micro_clusters_arr = update_micro_cluster_guarded(micro_clusters_arr, number_of_micro_clusters, t_2_d, i, columns, VARIANCE_LIMIT, DECAY_VALUE);
+        if (i == rows - 1)
         {
-            for (double variance_limit = 0.0; variance_limit < 0.0030; variance_limit += 0.0001)
+            unsigned int *adj_node = (unsigned int *)calloc(((*number_of_micro_clusters) * (*number_of_micro_clusters)), sizeof(unsigned int));
+            if (adj_node == NULL)
             {
-                char classified_samples_file_name[55];
-                snprintf(classified_samples_file_name, 55, "./samples_test/std_3_%d/classified_samples%d.txt", std_value_d, the_value);
-
-                for (unsigned int i = 0; i < rows; i++)
-                {
-                    printf("Counter %u\n", i);
-                    double *t_2_d = (double *)calloc(columns, sizeof(double));
-                    t_2_d[0] = x_features[(i * columns)];
-                    t_2_d[1] = x_features[(i * columns) + 1];
-
-                    micro_clusters_arr = update_micro_cluster_guarded(micro_clusters_arr, number_of_micro_clusters, t_2_d, i, columns, variance_limit, DECAY_VALUE);
-                    // write_samples(samples_file_name, t_2_d);
-
-                    if (i == rows - 1)
-                    {
-                        /*Creating Macros After*/
-                        unsigned int *adj_node = (unsigned int *)calloc(((*number_of_micro_clusters) * (*number_of_micro_clusters)), sizeof(unsigned int));
-                        if (adj_node == NULL)
-                        {
-                            printf("Could not allocate memory \n");
-                            exit(1);
-                        }
-                        adjency_matrix_diff(micro_clusters_arr, adj_node, *number_of_micro_clusters, columns, r_factor); // adjency_matrix(micro_clusters_arr, adj_node, *number_of_micro_clusters, columns);
-                        macro_clusters_arr = bfs_grouping(macro_clusters_arr, micro_clusters_arr, adj_node, number_of_macro_clusters, *number_of_micro_clusters, 1);
-                        regroup_adjency_matrix(macro_clusters_arr, micro_clusters_arr, adj_node, *number_of_macro_clusters, *number_of_micro_clusters);
-                        // write_macro_report(file_macro_before, macro_clusters_arr, micro_clusters_arr, number_of_macro_clusters, columns);
-                        dealloc_macros(macro_clusters_arr, number_of_macro_clusters);
-                        free(adj_node);
-
-                        adj_node = (unsigned int *)calloc(((*number_of_micro_clusters) * (*number_of_micro_clusters)), sizeof(unsigned int));
-                        if (adj_node == NULL)
-                        {
-                            printf("Could not allocate memory \n");
-                            exit(1);
-                        }
-                        adjency_matrix_diff(micro_clusters_arr, adj_node, *number_of_micro_clusters, columns, r_factor); // adjency_matrix(micro_clusters_arr, adj_node, *number_of_micro_clusters, columns);
-                        macro_clusters_arr = bfs_grouping(macro_clusters_arr, micro_clusters_arr, adj_node, number_of_macro_clusters, *number_of_micro_clusters, 1);
-                        // filter_macros(macro_clusters_arr, *number_of_macro_clusters);
-                        // write_macro_report(file_macro_after, macro_clusters_arr, micro_clusters_arr, number_of_macro_clusters, columns);
-                        free(adj_node);
-                        /*********************/
-                    }
-                    // if (i == rows - 1)
-                    //     write_micro_report(micro_clusters_arr, *number_of_micro_clusters);
-                    // classify(classified_samples_file_name, t_2_d, macro_clusters_arr, micro_clusters_arr, number_of_macro_clusters, i, rows-1, columns);
-                    free(t_2_d);
-                }
-                for (unsigned int i = 0; i < rows; i++)
-                {
-                    double *t_2_d = (double *)calloc(columns, sizeof(double));
-                    t_2_d[0] = x_features[(i * columns)];
-                    t_2_d[1] = x_features[(i * columns) + 1];
-                    classify(classified_samples_file_name, t_2_d, macro_clusters_arr, micro_clusters_arr, number_of_macro_clusters, i, rows - 1, columns, variance_limit);
-                    free(t_2_d);
-                }
-                /*Preventing DB Leaks and Micro Leaks | Macro Leaks */
-                dealloc_macros(macro_clusters_arr, number_of_macro_clusters);
-                dealloc_micros(micro_clusters_arr, number_of_micro_clusters);
-                /*********************/
-                the_value++;
+                printf("Could not allocate memory \n");
+                exit(1);
             }
+            adjency_matrix(micro_clusters_arr, adj_node, *number_of_micro_clusters, columns);
+            macro_clusters_arr = bfs_grouping(macro_clusters_arr, micro_clusters_arr, adj_node, number_of_macro_clusters, *number_of_micro_clusters, 1);
+            regroup_adjency_matrix(macro_clusters_arr, micro_clusters_arr, adj_node, *number_of_macro_clusters, *number_of_micro_clusters);
+            dealloc_macros(macro_clusters_arr, number_of_macro_clusters);
+            free(adj_node);
+
+            adj_node = (unsigned int *)calloc(((*number_of_micro_clusters) * (*number_of_micro_clusters)), sizeof(unsigned int));
+            if (adj_node == NULL)
+            {
+                printf("Could not allocate memory \n");
+                exit(1);
+            }
+            adjency_matrix(micro_clusters_arr, adj_node, *number_of_micro_clusters, columns);
+            macro_clusters_arr = bfs_grouping(macro_clusters_arr, micro_clusters_arr, adj_node, number_of_macro_clusters, *number_of_micro_clusters, 1);
+            free(adj_node);
         }
-        /***/
-        sqlite3_close(db);
-        free(x_features);
-        /*********************/
+        // dealloc_macros(macro_clusters_arr, number_of_macro_clusters);
+        free(t_2_d);
     }
+    for (unsigned int i = 0; i < rows; i++)
+    {
+        double *t_2_d = (double *)calloc(columns, sizeof(double));
+        for (unsigned int wu = 0; wu < columns; wu++)
+            t_2_d[wu] = ((float)rand() / (float)(RAND_MAX));
+        classify(classified_samples_file_name, t_2_d, macro_clusters_arr, micro_clusters_arr, number_of_macro_clusters, i, rows - 1, columns, VARIANCE_LIMIT);
+        free(t_2_d);
+    }
+    /*Preventing DB Leaks and Micro Leaks | Macro Leaks */
+    dealloc_macros(macro_clusters_arr, number_of_macro_clusters);
+    dealloc_micros(micro_clusters_arr, number_of_micro_clusters);
+    /*********************/
+    the_value++;
     return 0;
 }

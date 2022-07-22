@@ -31,6 +31,6 @@ void insert_entries_in_table(char *err, char *file_name, sqlite3 *db)
     fclose(fp);
     if (line)
         free(line);
-    printf("End of writing on table!");
+    // printf("End of writing on table!");
     return;
 }
